@@ -2,14 +2,17 @@
 import os
 import torch
 import schnetpack as spk
+import pandas as pd
 from schnetpack.datasets import OrganicMaterialsDatabase
 from torch.optim import Adam
 import numpy as np
 import matplotlib.pyplot as plt
 import shutil
 from ase.units import kcal, mol
+from ase.io import read
 import schnetpack.train as trn
 import spk_ombd_parser as arg_parser
+from schnetpack import AtomsData
 from schnetpack.utils import (
     get_divide_by_atoms
 )
@@ -96,13 +99,12 @@ def plot_results():
 	plt.xlabel('Time [s]')
 	plt.show()
 
-
 def main(args):
 
 	#building model
 	device = torch.device("cuda" if args.cuda else "cpu")
+	omdb = './omdb'
 	if args.mode == "train":
-		omdb = './omdb'
 		if not os.path.exists('omdb'):
 			os.makedirs(omdb)
 
@@ -120,9 +122,36 @@ def main(args):
 		means, stddevs = train_loader.get_statistics(
 			args.property, get_divide_by_atoms(args),atomref
 		)
-	model_train = model(args,omdData,atomref, means, stddevs)
-	trainer = train_model(args,model_train,train_loader,val_loader)
-	trainer.train(device=device, n_epochs=args.n_epochs)
+		model_train = model(args,omdData,atomref, means, stddevs)
+		trainer = train_model(args,model_train,train_loader,val_loader)
+		trainer.train(device=device, n_epochs=args.n_epochs)
+		#plot results
+		plot_results()
+	elif args.mode == "pred":
+
+		sch_model = torch.load(os.path.join(omdb, 'best_model'))
+		#reading test data
+		test_dataset = AtomsData('./cod_predict.db')
+		test_loader = spk.AtomsLoader(test_dataset, batch_size=100)
+		#reading stored cod list
+		cod_list = np.load('./cod_id_list_old.npy')
+		mean_abs_err = 0
+		prediction_list = []
+		print('Started generating predictions')
+		for count, batch in enumerate(test_loader):
+		    
+		    # move batch to GPU, if necessary
+		    batch = {k: v.to(device) for k, v in batch.items()}
+		    # apply model
+		    pred = sch_model(batch)
+		    prediction_list.extend(pred['band_gap'].detach().numpy().flatten().tolist())
+
+		    # log progress
+		    percent = '{:3.2f}'.format(count/len(test_loader)*100)
+		    print('Progress:', percent+'%'+' '*(5-len(percent)), end="\r")
+
+		results_df = pd.DataFrame({'cod':cod_list, 'prediction':prediction_list})
+		results_df.to_csv('./predictions.csv')
 
 
 
