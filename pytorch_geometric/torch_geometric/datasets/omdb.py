@@ -66,6 +66,9 @@ class OMDB(InMemoryDataset):
     def download(self):
         url = self.processed_url if rdkit is None else self.raw_url
         file_path = download_url(url, self.raw_dir)
+        print('------------')
+        print(self.raw_dir)
+        print('--------------')
         extract_zip(file_path, self.raw_dir)
         os.unlink(file_path)
 

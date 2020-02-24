@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch.nn import Sequential, Linear, ReLU, GRU
 
 import torch_geometric.transforms as T
-from torch_geometric.datasets import QM9
+from torch_geometric.datasets import OMDB
 from torch_geometric.nn import NNConv, Set2Set
 from torch_geometric.data import DataLoader
 from torch_geometric.utils import remove_self_loops
@@ -47,7 +47,7 @@ class Complete(object):
         return data
 
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'QM9')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'OMDB')
 transform = T.Compose([MyTransform(), Complete(), T.Distance(norm=False)])
 dataset = QM9(path, transform=transform).shuffle()
 
@@ -58,11 +58,9 @@ dataset.data.y = (dataset.data.y - mean) / std
 mean, std = mean[:, target].item(), std[:, target].item()
 
 # Split datasets.
-test_dataset = dataset[:10000]
-val_dataset = dataset[10000:20000]
-train_dataset = dataset[20000:]
+train_dataset = dataset[:10000]
+test_dataset = dataset[10000:]
 test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
-val_loader = DataLoader(val_dataset, batch_size=128, shuffle=False)
 train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
 
 
@@ -133,9 +131,4 @@ for epoch in range(1, 301):
     val_error = test(val_loader)
     scheduler.step(val_error)
 
-    if best_val_error is None or val_error <= best_val_error:
-        test_error = test(test_loader)
-        best_val_error = val_error
-
-    print('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '
-          'Test MAE: {:.7f}'.format(epoch, lr, loss, val_error, test_error))
+    print('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '.format(epoch, lr, loss, val_error, test_error))
