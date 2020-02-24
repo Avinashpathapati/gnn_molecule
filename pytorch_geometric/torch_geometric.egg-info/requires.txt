@@ -1,0 +1,13 @@
+torch
+numpy
+scipy
+networkx
+scikit-learn
+scikit-image
+numba
+requests
+plyfile
+pandas
+rdflib
+h5py
+googledrivedownloader
