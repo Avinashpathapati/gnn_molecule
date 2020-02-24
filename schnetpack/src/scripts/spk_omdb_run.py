@@ -128,7 +128,7 @@ def main(args):
 		#plot results
 		plot_results()
 	elif args.mode == "pred":
-
+		print('predictionsss')
 		sch_model = torch.load(os.path.join(omdb, 'best_model'))
 		#reading test data
 		test_dataset = AtomsData('./cod_predict.db')
