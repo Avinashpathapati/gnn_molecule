@@ -47,7 +47,8 @@ class OMDB(InMemoryDataset):
                'gap1_v1.1')
     #need to be changed later
     processed_url = 'https://omdb.mathub.io/dataset/download/gap1_v1.1'
-
+    if rdkit is not None:
+        bonds = {BT.SINGLE: 0, BT.DOUBLE: 1, BT.TRIPLE: 2, BT.AROMATIC: 3}
 
     def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):
@@ -155,17 +156,17 @@ class OMDB(InMemoryDataset):
                 start, end = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
                 row += [start, end]
                 col += [end, start]
-                #bond_idx += 2 * [self.bonds[bond.GetBondType()]]
+                bond_idx += 2 * [self.bonds[bond.GetBondType()]]
 
             edge_index = torch.tensor([row, col], dtype=torch.long)
-            # edge_attr = F.one_hot(torch.tensor(bond_idx),
-            #                       num_classes=len(self.bonds)).to(torch.float)
-            edge_index = coalesce(edge_index, None, N, N)
+            edge_attr = F.one_hot(torch.tensor(bond_idx),
+                                   num_classes=len(self.bonds)).to(torch.float)
+            edge_index = coalesce(edge_index, edge_attr, N, N)
 
             y = target[i].unsqueeze(0)
             name = mol.GetProp('_Name')
 
-            data = Data(x=x, pos=pos, edge_index=edge_index,
+            data = Data(x=x, pos=pos, edge_index=edge_index,edge_attr=edge_attr,
                 y=y, name=name)
 
             if self.pre_filter is not None and not self.pre_filter(data):
