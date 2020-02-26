@@ -8,6 +8,7 @@ from .ppi import PPI
 from .reddit import Reddit
 from .qm7 import QM7b
 from .qm9 import QM9
+from .omdb import OMDB
 from .entities import Entities
 from .ged_dataset import GEDDataset
 from .mnist_superpixels import MNISTSuperpixels
@@ -40,6 +41,7 @@ __all__ = [
     'Reddit',
     'QM7b',
     'QM9',
+    'OMDB',
     'Entities',
     'GEDDataset',
     'MNISTSuperpixels',

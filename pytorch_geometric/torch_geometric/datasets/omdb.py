@@ -4,7 +4,7 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from torch_sparse import coalesce
-from torch_geometric.data import (InMemoryDataset, download_url, extract_zip,
+from torch_geometric.data import (InMemoryDataset, download_url, extract_tar,
                                   Data)
 
 try:
@@ -46,8 +46,7 @@ class OMDB(InMemoryDataset):
     raw_url = ('https://omdb.mathub.io/dataset/download/'
                'gap1_v1.1')
     #need to be changed later
-    processed_url = 'https://omdb.mathub.io/dataset/download/'
-               'gap1_v1.1'
+    processed_url = 'https://omdb.mathub.io/dataset/download/gap1_v1.1'
 
 
     def __init__(self, root, transform=None, pre_transform=None,
@@ -69,7 +68,7 @@ class OMDB(InMemoryDataset):
         print('------------')
         print(self.raw_dir)
         print('--------------')
-        extract_zip(file_path, self.raw_dir)
+        extract_tar(file_path, self.raw_dir)
         os.unlink(file_path)
 
     def process(self):
@@ -92,6 +91,7 @@ class OMDB(InMemoryDataset):
 
         with open(self.raw_paths[1], 'r') as f:
             target = f.read().split('\n')[0:-1]
+            target = [float(i) for i in target]
             target = torch.tensor(target, dtype=torch.float)
 
         suppl = Chem.SDMolSupplier(self.raw_paths[0], removeHs=False)
@@ -160,7 +160,7 @@ class OMDB(InMemoryDataset):
             edge_index = torch.tensor([row, col], dtype=torch.long)
             # edge_attr = F.one_hot(torch.tensor(bond_idx),
             #                       num_classes=len(self.bonds)).to(torch.float)
-            edge_index = coalesce(edge_index,  N)
+            edge_index = coalesce(edge_index, None, N, N)
 
             y = target[i].unsqueeze(0)
             name = mol.GetProp('_Name')

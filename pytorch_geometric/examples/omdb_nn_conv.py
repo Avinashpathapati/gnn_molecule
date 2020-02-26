@@ -17,16 +17,15 @@ dim = 64
 class MyTransform(object):
     def __call__(self, data):
         # Specify target.
-        data.y = data.y[:, target]
         return data
 
 
 class Complete(object):
     def __call__(self, data):
-        device = data.edge_index.device
+        #device = data.edge_index.device
 
-        row = torch.arange(data.num_nodes, dtype=torch.long, device=device)
-        col = torch.arange(data.num_nodes, dtype=torch.long, device=device)
+        row = torch.arange(data.num_nodes, dtype=torch.long, device=None)
+        col = torch.arange(data.num_nodes, dtype=torch.long, device=None)
 
         row = row.view(-1, 1).repeat(1, data.num_nodes).view(-1)
         col = col.repeat(data.num_nodes)
@@ -49,13 +48,16 @@ class Complete(object):
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'OMDB')
 transform = T.Compose([MyTransform(), Complete(), T.Distance(norm=False)])
-dataset = QM9(path, transform=transform).shuffle()
+dataset = OMDB(path).shuffle()
 
 # Normalize targets to mean = 0 and std = 1.
 mean = dataset.data.y.mean(dim=0, keepdim=True)
 std = dataset.data.y.std(dim=0, keepdim=True)
 dataset.data.y = (dataset.data.y - mean) / std
-mean, std = mean[:, target].item(), std[:, target].item()
+print('---------')
+print(dataset.data.y.size())
+print(dataset.num_features)
+mean, std = mean.item(), std.item()
 
 # Split datasets.
 train_dataset = dataset[:10000]
@@ -78,6 +80,7 @@ class Net(torch.nn.Module):
         self.lin2 = torch.nn.Linear(dim, 1)
 
     def forward(self, data):
+        print(data.x.size())
         out = F.relu(self.lin0(data.x))
         h = out.unsqueeze(0)
 
@@ -131,4 +134,4 @@ for epoch in range(1, 301):
     val_error = test(val_loader)
     scheduler.step(val_error)
 
-    print('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '.format(epoch, lr, loss, val_error, test_error))
+    print('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '.format(epoch, lr, loss, val_error))
