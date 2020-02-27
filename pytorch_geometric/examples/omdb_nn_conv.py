@@ -54,9 +54,6 @@ dataset = OMDB(path,transform=transform).shuffle()
 mean = dataset.data.y.mean(dim=0, keepdim=True)
 std = dataset.data.y.std(dim=0, keepdim=True)
 dataset.data.y = (dataset.data.y - mean) / std
-print('---------')
-print(dataset.data.y.size())
-print(dataset.num_features)
 mean, std = mean.item(), std.item()
 
 # Split datasets.
@@ -80,7 +77,6 @@ class Net(torch.nn.Module):
         self.lin2 = torch.nn.Linear(dim, 1)
 
     def forward(self, data):
-        print(data.x.size())
         out = F.relu(self.lin0(data.x))
         h = out.unsqueeze(0)
 
