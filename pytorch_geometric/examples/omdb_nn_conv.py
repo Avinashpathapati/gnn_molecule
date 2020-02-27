@@ -1,5 +1,6 @@
 import os.path as osp
-
+import os
+import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
 from torch.nn import Sequential, Linear, ReLU, GRU
@@ -123,11 +124,31 @@ def test(loader):
     return error / len(loader.dataset)
 
 
+def plot_results(epochs, train_loss, val_loss):
+    
+    if osp.isfile('./nnconv.png'):
+        os.remove('./nnconv.png') 
+    plt.figure()
+    plt.plot(epochs, train_loss, label='Train')
+    plt.plot(epochs, val_loss, label='Validation')
+    plt.ylabel('Loss [eV]')
+    plt.xlabel('epochs')
+    plt.title('Validation Accuracy Results')
+    plt.legend(['Train', 'Validation'], loc='upper left')
+    plt.savefig('./nnconv.png')
+    plt.close()
+
+
 best_val_error = None
+train_loss = []
+val_loss = []
 for epoch in range(1, 301):
     lr = scheduler.optimizer.param_groups[0]['lr']
     loss = train(epoch)
     val_error = test(val_loader)
     scheduler.step(val_error)
-
+    train_loss.append(loss)
+    val_loss.append(val_error)
     print('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '.format(epoch, lr, loss, val_error))
+
+plot_results(range(1, 301), train_loss, val_loss)
