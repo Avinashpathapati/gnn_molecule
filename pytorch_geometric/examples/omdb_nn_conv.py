@@ -23,10 +23,10 @@ class MyTransform(object):
 
 class Complete(object):
     def __call__(self, data):
-        #device = data.edge_index.device
+        device = data.edge_index.device
 
-        row = torch.arange(data.num_nodes, dtype=torch.long, device=None)
-        col = torch.arange(data.num_nodes, dtype=torch.long, device=None)
+        row = torch.arange(data.num_nodes, dtype=torch.long, device=device)
+        col = torch.arange(data.num_nodes, dtype=torch.long, device=device)
 
         row = row.view(-1, 1).repeat(1, data.num_nodes).view(-1)
         col = col.repeat(data.num_nodes)
@@ -60,8 +60,8 @@ mean, std = mean.item(), std.item()
 # Split datasets.
 train_dataset = dataset[:10000]
 test_dataset = dataset[10000:]
-test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
-train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
+val_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 
 
 class Net(torch.nn.Module):
@@ -93,6 +93,7 @@ class Net(torch.nn.Module):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+#device = torch.device('cuda')
 model = Net().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
