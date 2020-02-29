@@ -159,6 +159,7 @@ class OMDB(InMemoryDataset):
                 bond_idx += 2 * [self.bonds[bond.GetBondType()]]
 
             edge_index = torch.tensor([row, col], dtype=torch.long)
+            print(edge_index)
             edge_attr = F.one_hot(torch.tensor(bond_idx),
                                    num_classes=len(self.bonds)).to(torch.float)
             edge_index, edge_attr = coalesce(edge_index, edge_attr, N, N)
