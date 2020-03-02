@@ -8,4 +8,4 @@
 
 
 cd /home/s3754715/gnn_molecule/pytorch_geometric/examples/
-python omdb_nn_conv.py
+python omdb_nn_conv.py > out.txt
