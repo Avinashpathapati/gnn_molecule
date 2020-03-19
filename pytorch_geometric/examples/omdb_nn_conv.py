@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torch.nn import Sequential, Linear, ReLU, GRU
 
 import torch_geometric.transforms as T
-from torch_geometric.datasets import OMDB
+from torch_geometric.datasets import OMDBXYZ
 from torch_geometric.nn import NNConv, Set2Set
 from torch_geometric.data import DataLoader
 from torch_geometric.utils import remove_self_loops
@@ -49,7 +49,7 @@ class Complete(object):
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'OMDB')
 transform = T.Compose([MyTransform(), Complete(), T.Distance(norm=False)])
-dataset = OMDB(path,transform=transform).shuffle()
+dataset = OMDBXYZ(path,transform=transform).shuffle()
 
 # Normalize targets to mean = 0 and std = 1.
 mean = dataset.data.y.mean(dim=0, keepdim=True)
