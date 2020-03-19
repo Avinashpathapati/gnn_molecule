@@ -44,8 +44,7 @@ class OMDBXYZ(InMemoryDataset):
 			   'gap1_v1.1')
 	#need to be changed later
 	processed_url = 'https://omdb.mathub.io/dataset/download/gap1_v1.1'
-	if rdkit is not None:
-		bonds = {BT.SINGLE: 0, BT.DOUBLE: 1, BT.TRIPLE: 2, BT.AROMATIC: 3}
+	bonds = {"SINGLE": 0}
 
 	def __init__(self, root, transform=None, pre_transform=None,
 				 pre_filter=None):
@@ -54,7 +53,7 @@ class OMDBXYZ(InMemoryDataset):
 
 	@property
 	def raw_file_names(self):
-		return ['structures.xyz','bandgaps.csv', 'CODids.csv']
+		return ['OMDB-GAP1_v1.1.db','bandgaps.csv', 'CODids.csv']
 
 	@property
 	def processed_file_names(self):
@@ -110,7 +109,7 @@ class OMDBXYZ(InMemoryDataset):
 					for end in atom_bond_list:
 						row += [start, end]
 						col += [end, start]
-						bond_idx += 2 * [self.bonds[BT.SINGLE]]
+						bond_idx += 2 * [self.bonds["SINGLE"]]
 
 			
 			edge_index = torch.tensor([row, col], dtype=torch.long)
