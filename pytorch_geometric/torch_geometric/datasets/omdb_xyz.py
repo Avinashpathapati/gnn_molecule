@@ -41,14 +41,14 @@ class OMDBXYZ(InMemoryDataset):
 	"""  
 
 	raw_url = ('https://omdb.mathub.io/dataset/download/'
-			   'gap1_v1.1')
+			   'OMDB-GAP1_v1.1.tar.gz')
 	#need to be changed later
 	processed_url = 'https://omdb.mathub.io/dataset/download/gap1_v1.1'
 	bonds = {"SINGLE": 0}
 
 	def __init__(self, root, transform=None, pre_transform=None,
 				 pre_filter=None):
-		super(OMDB, self).__init__(root, transform, pre_transform, pre_filter)
+		super(OMDBXYZ, self).__init__(root, transform, pre_transform, pre_filter)
 		self.data, self.slices = torch.load(self.processed_paths[0])
 
 	@property
@@ -62,8 +62,8 @@ class OMDBXYZ(InMemoryDataset):
 	def download(self):
 		url = self.raw_url
 		file_path = download_url(url, self.raw_dir)
-		print("Converting %s to a .db file.." % self.path)
-		tar = tarfile.open(self.raw_dir, "r:gz")
+		print("Converting %s to a .db file.." % file_path)
+		tar = tarfile.open(osp.join(self.raw_dir,'OMDB-GAP1_v1.1.tar.gz'), "r:gz")
 		names = tar.getnames()
 		tar.extractall()
 		tar.close()
@@ -118,7 +118,7 @@ class OMDBXYZ(InMemoryDataset):
 			edge_index, edge_attr = coalesce(edge_index, edge_attr, N, N)
 
 			y = target[i].unsqueeze(0)
-			name = mol.GetProp('_Name')
+			name = str(at_obj.symbols)
 
 			data = Data(x=x, pos=pos, edge_index=edge_index,edge_attr=edge_attr,
 				y=y, name=name)
