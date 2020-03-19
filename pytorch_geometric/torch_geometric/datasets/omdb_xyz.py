@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import tarfile
 
 import torch
 import torch.nn.functional as F
@@ -9,6 +10,11 @@ from torch_geometric.data import (InMemoryDataset, download_url, extract_tar,
 
 from schnetpack.datasets import OrganicMaterialsDatabase
 from ase.geometry.analysis import Analysis
+import numpy as np
+from ase.io import read
+from ase.db import connect
+from ase.units import eV
+
 
 
 class OMDBXYZ(InMemoryDataset):
@@ -55,10 +61,21 @@ class OMDBXYZ(InMemoryDataset):
 		return 'omdb_data.pt'
 
 	def download(self):
-		url = self.processed_url if rdkit is None else self.raw_url
+		url = self.raw_url
 		file_path = download_url(url, self.raw_dir)
-		extract_tar(file_path, self.raw_dir)
-		os.unlink(file_path)
+		print("Converting %s to a .db file.." % self.path)
+        tar = tarfile.open(self.raw_dir, "r:gz")
+        names = tar.getnames()
+        tar.extractall()
+        tar.close()
+
+        structures = read("structures.xyz", index=":")
+        Y = np.loadtxt("bandgaps.csv")
+        [os.remove(name) for name in names]
+
+        with connect(self.dbpath) as con:
+            for i, at in enumerate(structures):
+                con.write(at, data={OrganicMaterialsDatabase.BandGap: Y[i]})
 
 	def process(self):
 
