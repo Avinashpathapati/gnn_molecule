@@ -11,7 +11,7 @@ from schnetpack.datasets import OrganicMaterialsDatabase
 from ase.geometry.analysis import Analysis
 
 
-class OMDB(InMemoryDataset):
+class OMDBXYZ(InMemoryDataset):
 	r"""Organic Materials Database (OMDB) of bulk organic crystals.
 
 	Registration to the OMDB is free for academic users. This database contains DFT
