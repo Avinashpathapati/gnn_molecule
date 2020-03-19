@@ -84,10 +84,10 @@ class OMDBXYZ(InMemoryDataset):
 			target = torch.tensor(target, dtype=torch.float)
 
 		omdData = OrganicMaterialsDatabase(self.raw_paths[0], download=False)
-                print(len(omdData))
+		print(len(omdData))
 		data_list = []
 		for i, mol in enumerate(omdData):
-                        print(i)
+			print(i)
 			if mol is None:
 				print(str(i),' not a molecule')
 				continue
