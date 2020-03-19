@@ -63,18 +63,18 @@ class OMDBXYZ(InMemoryDataset):
 		url = self.raw_url
 		file_path = download_url(url, self.raw_dir)
 		print("Converting %s to a .db file.." % self.path)
-        tar = tarfile.open(self.raw_dir, "r:gz")
-        names = tar.getnames()
-        tar.extractall()
-        tar.close()
+		tar = tarfile.open(self.raw_dir, "r:gz")
+		names = tar.getnames()
+		tar.extractall()
+		tar.close()
 
-        structures = read("structures.xyz", index=":")
-        Y = np.loadtxt("bandgaps.csv")
-        [os.remove(name) for name in names]
+		structures = read("structures.xyz", index=":")
+		Y = np.loadtxt("bandgaps.csv")
+		[os.remove(name) for name in names]
 
-        with connect(self.dbpath) as con:
-            for i, at in enumerate(structures):
-                con.write(at, data={OrganicMaterialsDatabase.BandGap: Y[i]})
+		with connect(self.dbpath) as con:
+			for i, at in enumerate(structures):
+				con.write(at, data={OrganicMaterialsDatabase.BandGap: Y[i]})
 
 	def process(self):
 
