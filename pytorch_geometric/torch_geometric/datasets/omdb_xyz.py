@@ -86,8 +86,8 @@ class OMDBXYZ(InMemoryDataset):
 		omdData = OrganicMaterialsDatabase(self.raw_paths[0], download=False)
 		print(len(omdData))
 		data_list = []
-		for i, mol in enumerate(omdData):
-			print(i)
+		for i in range(len(omdData)):
+			mol = omdData[i]
 			if mol is None:
 				print(str(i),' not a molecule')
 				continue
