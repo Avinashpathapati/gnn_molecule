@@ -44,7 +44,7 @@ class OMDBXYZ(InMemoryDataset):
 			   'OMDB-GAP1_v1.1.tar.gz')
 	#need to be changed later
 	processed_url = 'https://omdb.mathub.io/dataset/download/gap1_v1.1'
-	bonds = {"SINGLE": 0}
+	bonds = {BT.SINGLE: 0, BT.DOUBLE: 1, BT.TRIPLE: 2, BT.AROMATIC: 3}
 
 	def __init__(self, root, transform=None, pre_transform=None,
 				 pre_filter=None):
