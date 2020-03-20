@@ -93,6 +93,7 @@ class OMDBXYZ(InMemoryDataset):
 				continue
 
 			pos = mol['_positions']
+			print('after constructing positions')
 
 			atomic_number = []
 			for atom_num in mol['_atomic_numbers']:
@@ -104,7 +105,10 @@ class OMDBXYZ(InMemoryDataset):
 			], dtype=torch.float).t().contiguous()
 
 			row, col, bond_idx = [], [], []
+			print('before fetching the atom properties ',str(i))
 			at_obj = omdData.get_atoms(idx=i)
+			print('after fetching the atom properties')
+
 			bond_anal = Analysis(at_obj)
 			for bond_list in bond_anal.unique_bonds:
 				for start, atom_bond_list in enumerate(bond_list):
@@ -113,7 +117,7 @@ class OMDBXYZ(InMemoryDataset):
 						col += [end, start]
 						bond_idx += 2 * [self.bonds["SINGLE"]]
 
-			
+			print('after constructing the bonds')
 			edge_index = torch.tensor([row, col], dtype=torch.long)
 			edge_attr = F.one_hot(torch.tensor(bond_idx),
 								   num_classes=len(self.bonds)).to(torch.float)
@@ -121,15 +125,17 @@ class OMDBXYZ(InMemoryDataset):
 
 			y = target[i].unsqueeze(0)
 			name = str(at_obj.symbols)
-
+			print('constructing data')
 			data = Data(x=x, pos=pos, edge_index=edge_index,edge_attr=edge_attr,
 				y=y, name=name)
 
+			print('after constructing data')
 			if self.pre_filter is not None and not self.pre_filter(data):
 				continue
 			if self.pre_transform is not None:
 				data = self.pre_transform(data)
 
 			data_list.append(data)
-	   
+		
+		print('saving data')
 		torch.save(self.collate(data_list), self.processed_paths[0])
