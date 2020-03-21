@@ -58,10 +58,13 @@ dataset.data.y = (dataset.data.y - mean) / std
 mean, std = mean.item(), std.item()
 
 # Split datasets.
-train_dataset = dataset[:10000]
+train_dataset = dataset[:9000]
+val_dataset = dataset[9000:10000]
 test_dataset = dataset[10000:]
-val_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+
+val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True)
 
 
 class Net(torch.nn.Module):
@@ -125,17 +128,18 @@ def test(loader):
     return error / len(loader.dataset)
 
 
-def plot_results(epochs, train_loss, val_loss):
+def plot_results(epochs, train_loss, val_loss, test_loss):
     
     if osp.isfile('./nnconv.png'):
         os.remove('./nnconv.png') 
     plt.figure()
     plt.plot(epochs, train_loss, label='Train')
     plt.plot(epochs, val_loss, label='Validation')
+    plt.plot(epochs, test_loss, label='Test')
     plt.ylabel('Loss [eV]')
     plt.xlabel('epochs')
-    plt.title('Validation Accuracy Results')
-    plt.legend(['Train', 'Validation'], loc='upper left')
+    plt.title('Validation Test Error Results')
+    plt.legend(['Train', 'Validation', 'Test'], loc='upper left')
     plt.savefig('./nnconv.png')
     plt.close()
 
@@ -143,6 +147,7 @@ def plot_results(epochs, train_loss, val_loss):
 best_val_error = None
 train_loss = []
 val_loss = []
+test_loss = []
 for epoch in range(1, 301):
     lr = scheduler.optimizer.param_groups[0]['lr']
     loss = train(epoch)
@@ -150,6 +155,10 @@ for epoch in range(1, 301):
     scheduler.step(val_error)
     train_loss.append(loss)
     val_loss.append(val_error)
-    print('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '.format(epoch, lr, loss, val_error))
+    test_error = test(test_loader)
+    test_loss.append(test_error)
 
-plot_results(range(1, 301), train_loss, val_loss)
+    print('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '
+          'Test MAE: {:.7f}'.format(epoch, lr, loss, val_error, test_error))
+
+plot_results(range(1, 301), train_loss, val_loss, test_loss)
