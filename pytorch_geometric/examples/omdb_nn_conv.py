@@ -76,7 +76,7 @@ class Net(torch.nn.Module):
         self.conv = NNConv(dim, dim, nn, aggr='mean')
         self.gru = GRU(dim, dim)
 
-        self.set2set = Set2Set(dim, processing_steps=3)
+        self.set2set = Set2Set(dim, processing_steps=1)
         self.lin1 = torch.nn.Linear(2 * dim, dim)
         self.lin2 = torch.nn.Linear(dim, 1)
 
