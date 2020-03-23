@@ -29,8 +29,9 @@ def simple_loss_fn(args):
 def model(args,omdData,atomrefs, means, stddevs):
 
 	schnet = spk.representation.SchNet(
-		n_filters=64, n_gaussians=25, n_interactions=3,
-		cutoff=5., cutoff_network=spk.nn.cutoff.CosineCutoff
+		n_filters=64, n_gaussians=25, n_interactions=6,
+		cutoff=5.
+		#cutoff_network=spk.nn.cutoff.CosineCutoff
 	)
 
 	output_Bgap = spk.atomistic.Atomwise(n_in=args.features, atomref=atomrefs[OrganicMaterialsDatabase.BandGap], property=OrganicMaterialsDatabase.BandGap,
@@ -57,10 +58,9 @@ def train_model(args,model,train_loader,val_loader):
 	]
 	hooks = [
 		trn.CSVHook(log_path='./omdb', metrics=metrics),
-		trn.ReduceLROnPlateauHook(
+		trn.ExponentialDecayHook(
 			optimizer,
-			patience=5, factor=0.6, min_lr=1e-6,
-			stop_after_min=True
+			gamma=0.96, step_size=10000
 		)
 	]
 	trainer = trn.Trainer(model_path='./omdb',model=model,
@@ -97,7 +97,7 @@ def plot_results():
 	plt.plot(time, val_mae)
 	plt.ylabel('mean abs. error [eV]')
 	plt.xlabel('Time [s]')
-	plt.show()
+	plt.savefig('./schnet_acc.png')
 
 def main(args):
 
@@ -112,8 +112,8 @@ def main(args):
 
 		train, val, test = spk.train_test_split(
 			data=omdData,
-			num_train=10000,
-			num_val=2500,
+			num_train=9000,
+			num_val=1000,
 			split_file=os.path.join(args.model_path, "split.npz"),
 		)
 		train_loader = spk.AtomsLoader(train, batch_size=32, shuffle=True)
@@ -125,8 +125,34 @@ def main(args):
 		model_train = model(args,omdData,atomref, means, stddevs)
 		trainer = train_model(args,model_train,train_loader,val_loader)
 		trainer.train(device=device, n_epochs=args.n_epochs)
+		sch_model = torch.load(os.path.join(omdb, 'best_model'))
+		test_loader = spk.AtomsLoader(test, batch_size=100)
+
+		err = 0
+		print(len(test_loader))
+		for count, batch in enumerate(test_loader):
+		    # move batch to GPU, if necessary
+		    batch = {k: v.to(device) for k, v in batch.items()}
+
+		    # apply model
+		    pred = sch_model(batch)
+
+		    # calculate absolute error
+		    tmp = torch.sum(torch.abs(pred[args.property]-batch[args.property]))
+		    tmp = tmp.detach().cpu().numpy() # detach from graph & convert to numpy
+		    err += tmp
+
+		    # log progress
+		    percent = '{:3.2f}'.format(count/len(test_loader)*100)
+		    print('Progress:', percent+'%'+' '*(5-len(percent)), end="\r")
+
+		err /= len(test)
+		print('Test MAE', np.round(err, 2), 'eV =',
+		      np.round(err / (kcal/mol), 2), 'kcal/mol')
+		
 		#plot results
 		plot_results()
+
 	elif args.mode == "pred":
 		print('predictionsss')
 		sch_model = torch.load(os.path.join(omdb, 'best_model'))
