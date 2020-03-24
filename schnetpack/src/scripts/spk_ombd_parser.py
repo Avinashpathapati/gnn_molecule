@@ -2,8 +2,8 @@ from optparse import OptionParser
 
 def build_parser():
 	parser = OptionParser()
-	parser.add_option("-c", "--cuda", action='store_false')
-	parser.add_option("-t", "--pred", action='store_false')
+	parser.add_option("-c", "--cuda", action='store_true', default=False)
+	parser.add_option("-t", "--pred", action='store_true', default=False)
 
 	parser.add_option("-o", "--mode",
 				  action="store", type="string", dest="mode")
