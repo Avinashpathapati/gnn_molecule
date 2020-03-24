@@ -103,6 +103,7 @@ def main(args):
 
 	#building model
 	device = torch.device("cuda" if args.cuda else "cpu")
+        print(device)
 	omdb = './omdb'
 	if args.mode == "train":
 		if not os.path.exists('omdb'):
