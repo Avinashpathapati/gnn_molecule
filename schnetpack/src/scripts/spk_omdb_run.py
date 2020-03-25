@@ -58,10 +58,11 @@ def train_model(args,model,train_loader,val_loader):
 	]
 	hooks = [
 		trn.CSVHook(log_path='./omdb', metrics=metrics),
-		trn.ExponentialDecayHook(
-			optimizer,
-			gamma=0.96, step_size=10000
-		)
+		trn.ReduceLROnPlateauHook(
+        optimizer,
+        patience=25, factor=0.6, min_lr=1e-6,
+        stop_after_min=True
+        )
 	]
 	trainer = trn.Trainer(model_path='./omdb',model=model,
 	hooks=hooks,
@@ -102,9 +103,7 @@ def plot_results():
 def main(args):
 
 	#building model
-	print(args)
 	device = torch.device("cuda" if args.cuda else "cpu")
-	print(device)
 	omdb = './omdb'
 	if args.mode == "train":
 		if not os.path.exists('omdb'):
@@ -128,7 +127,7 @@ def main(args):
 		trainer = train_model(args,model_train,train_loader,val_loader)
 		trainer.train(device=device, n_epochs=args.n_epochs)
 		sch_model = torch.load(os.path.join(omdb, 'best_model'))
-		test_loader = spk.AtomsLoader(test, batch_size=100)
+		test_loader = spk.AtomsLoader(test, batch_size=32)
 
 		err = 0
 		print(len(test_loader))
@@ -160,7 +159,7 @@ def main(args):
 		sch_model = torch.load(os.path.join(omdb, 'best_model'))
 		#reading test data
 		test_dataset = AtomsData('./cod_predict.db')
-		test_loader = spk.AtomsLoader(test_dataset, batch_size=100)
+		test_loader = spk.AtomsLoader(test_dataset, batch_size=32)
 		#reading stored cod list
 		cod_list = np.load('./cod_id_list_old.npy')
 		mean_abs_err = 0
