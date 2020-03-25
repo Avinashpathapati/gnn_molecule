@@ -29,7 +29,7 @@ def simple_loss_fn(args):
 def model(args,omdData,atomrefs, means, stddevs):
 
 	schnet = spk.representation.SchNet(
-		n_filters=64, n_gaussians=25, n_interactions=6,
+		n_filters=64, n_gaussians=25, n_interactions=3,
 		cutoff=5.
 		#cutoff_network=spk.nn.cutoff.CosineCutoff
 	)
@@ -102,6 +102,7 @@ def plot_results():
 def main(args):
 
 	#building model
+	print(args)
 	device = torch.device("cuda" if args.cuda else "cpu")
 	print(device)
 	omdb = './omdb'
