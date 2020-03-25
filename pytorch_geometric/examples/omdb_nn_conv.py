@@ -12,7 +12,7 @@ from torch_geometric.data import DataLoader
 from torch_geometric.utils import remove_self_loops
 
 target = 0
-dim = 64
+dim = 32
 
 
 class MyTransform(object):
@@ -100,8 +100,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
-                                                       factor=0.7, patience=5,
-                                                       min_lr=0.00001)
+                                                       factor=0.7, patience=25,
+                                                       min_lr=1e-6)
 
 
 def train(epoch):
@@ -148,7 +148,7 @@ best_val_error = None
 train_loss = []
 val_loss = []
 test_loss = []
-for epoch in range(1, 301):
+for epoch in range(1, 401):
     lr = scheduler.optimizer.param_groups[0]['lr']
     loss = train(epoch)
     val_error = test(val_loader)
