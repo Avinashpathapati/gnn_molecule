@@ -12,7 +12,7 @@ from torch_geometric.data import DataLoader
 from torch_geometric.utils import remove_self_loops
 
 target = 0
-dim = 32
+dim = 24
 
 
 class MyTransform(object):
@@ -72,7 +72,7 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
         self.lin0 = torch.nn.Linear(dataset.num_features, dim)
 
-        nn = Sequential(Linear(5, 128), ReLU(), Linear(128, dim * dim))
+        nn = Sequential(Linear(5, 64), ReLU(), Linear(64, dim * dim))
         self.conv = NNConv(dim, dim, nn, aggr='mean')
         self.gru = GRU(dim, dim)
 
@@ -148,7 +148,7 @@ best_val_error = None
 train_loss = []
 val_loss = []
 test_loss = []
-for epoch in range(1, 401):
+for epoch in range(1, 501):
     lr = scheduler.optimizer.param_groups[0]['lr']
     loss = train(epoch)
     val_error = test(val_loader)
@@ -161,4 +161,4 @@ for epoch in range(1, 401):
     print('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '
           'Test MAE: {:.7f}'.format(epoch, lr, loss, val_error, test_error))
 
-plot_results(range(1, 301), train_loss, val_loss, test_loss)
+plot_results(range(1, 501), train_loss, val_loss, test_loss)
