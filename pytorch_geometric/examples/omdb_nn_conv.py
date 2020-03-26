@@ -72,11 +72,11 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
         self.lin0 = torch.nn.Linear(dataset.num_features, dim)
 
-        nn = Sequential(Linear(5, 64), ReLU(), Linear(64, dim * dim))
+        nn = Sequential(Linear(5, 128), ReLU(), Linear(128, dim * dim))
         self.conv = NNConv(dim, dim, nn, aggr='mean')
         self.gru = GRU(dim, dim)
 
-        self.set2set = Set2Set(dim, processing_steps=1)
+        self.set2set = Set2Set(dim, processing_steps=2)
         self.lin1 = torch.nn.Linear(2 * dim, dim)
         self.lin2 = torch.nn.Linear(dim, 1)
 
@@ -100,7 +100,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
-                                                       factor=0.7, patience=25,
+                                                       factor=0.5, patience=30,
                                                        min_lr=1e-6)
 
 
