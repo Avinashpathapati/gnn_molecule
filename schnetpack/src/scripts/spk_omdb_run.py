@@ -130,8 +130,8 @@ def main(args):
 			num_val=1000,
 			split_file=split_path
 		)
-		train_loader = spk.AtomsLoader(train, batch_size=100, sampler=RandomSampler(train), num_workers=4, pin_memory=True)
-		val_loader = spk.AtomsLoader(val, batch_size=100, num_workers=2, pin_memory=True)
+		train_loader = spk.AtomsLoader(train, batch_size=32, sampler=RandomSampler(train), num_workers=4, pin_memory=True)
+		val_loader = spk.AtomsLoader(val, batch_size=32, num_workers=2, pin_memory=True)
 		atomref = omdData.get_atomref(args.property)
 		mean, stddev = get_statistics(
 	        args=args,
