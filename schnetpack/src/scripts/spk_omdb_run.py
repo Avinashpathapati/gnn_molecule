@@ -2,6 +2,7 @@
 import os
 import torch
 import schnetpack as spk
+import logging
 import pandas as pd
 from schnetpack.datasets import OrganicMaterialsDatabase
 from torch.optim import Adam
@@ -13,10 +14,15 @@ from ase.io import read
 import schnetpack.train as trn
 import spk_ombd_parser as arg_parser
 from schnetpack import AtomsData
+from schnetpack.utils.script_utils.settings import get_environment_provider
+from torch.utils.data.sampler import RandomSampler
 from schnetpack.utils import (
-    get_divide_by_atoms
+    get_divide_by_atoms,
+    get_statistics,
+    get_output_module
 )
 
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 def simple_loss_fn(args):
 	def loss(batch, result):
@@ -29,27 +35,31 @@ def simple_loss_fn(args):
 def model(args,omdData,atomrefs, means, stddevs):
 
 	schnet = spk.representation.SchNet(
-		n_filters=64, n_gaussians=25, n_interactions=3,
-		cutoff=5.
-		#cutoff_network=spk.nn.cutoff.CosineCutoff
+		n_atom_basis=128, n_filters=128, n_gaussians=50, n_interactions=3,
+		cutoff=10.0, cutoff_network=spk.nn.cutoff.CosineCutoff
 	)
+	output_module = get_output_module(
+            args,
+            representation=schnet,
+            mean=means,
+            stddev=stddevs,
+            atomref=atomrefs,
+        )
 
-	output_Bgap = spk.atomistic.Atomwise(n_in=args.features, atomref=atomrefs[OrganicMaterialsDatabase.BandGap], property=OrganicMaterialsDatabase.BandGap,
-							   mean=means[OrganicMaterialsDatabase.BandGap], stddev=stddevs[OrganicMaterialsDatabase.BandGap])
-	model = spk.AtomisticModel(representation=schnet, output_modules=output_Bgap)
+	# output_Bgap = spk.atomistic.Atomwise(n_in=args.features, atomref=atomrefs[OrganicMaterialsDatabase.BandGap], property=OrganicMaterialsDatabase.BandGap,
+	# 						   mean=means[OrganicMaterialsDatabase.BandGap], stddev=stddevs[OrganicMaterialsDatabase.BandGap])
+	model = spk.AtomisticModel(representation=schnet, output_modules=output_module)
 	return model
 
 def train_model(args,model,train_loader,val_loader):
 
 	# before setting up the trainer, remove previous training checkpoints and logs
+	if os.path.exists(os.path.join(args.model_path,'checkpoints')):
+		shutil.rmtree(os.path.join(args.model_path,'checkpoints'))
 
-	if os.path.exists('./omdb/checkpoints'):
-		shutil.rmtree('./omdb/checkpoints')
+	if os.path.exists(os.path.join(args.model_path,'log.csv')):
+		os.remove(os.path.join(args.model_path,'log.csv'))
 
-	if os.path.exists('./omdb/log.csv'):
-		os.remove('./omdb/log.csv')
-
-	loss = simple_loss_fn(args)
 	trainable_params = filter(lambda p: p.requires_grad, model.parameters())
 	optimizer = Adam(trainable_params, lr=args.lr)
 	metrics = [
@@ -57,14 +67,16 @@ def train_model(args,model,train_loader,val_loader):
 		spk.train.metrics.RootMeanSquaredError(args.property, args.property),
 	]
 	hooks = [
-		trn.CSVHook(log_path='./omdb', metrics=metrics),
+		trn.CSVHook(log_path=args.model_path, metrics=metrics),
 		trn.ReduceLROnPlateauHook(
         optimizer,
-        patience=25, factor=0.6, min_lr=1e-6,
+        patience=25, factor=0.6, min_lr=1e-6,window_length=1,
         stop_after_min=True
         )
 	]
-	trainer = trn.Trainer(model_path='./omdb',model=model,
+
+	loss = simple_loss_fn(args)
+	trainer = trn.Trainer(model_path=args.model_path,model=model,
 	hooks=hooks,
 	loss_fn=loss,
 	optimizer=optimizer,
@@ -76,7 +88,7 @@ def train_model(args,model,train_loader,val_loader):
 
 def plot_results():
 
-	results = np.loadtxt(os.path.join('./omdb', 'log.csv'), skiprows=1, delimiter=',')
+	results = np.loadtxt(os.path.join(args.model_path, 'log.csv'), skiprows=1, delimiter=',')
 	time = results[:,0]-results[0,0]
 	learning_rate = results[:,1]
 	train_loss = results[:,2]
@@ -102,54 +114,65 @@ def plot_results():
 
 def main(args):
 
-	#building model
+	#building model and dataset
 	device = torch.device("cuda" if args.cuda else "cpu")
+	environment_provider = spk.environment.SimpleEnvironmentProvider()
 	omdb = './omdb'
 	if args.mode == "train":
 		if not os.path.exists('omdb'):
 			os.makedirs(omdb)
 
-		omdData = OrganicMaterialsDatabase(args.datapath, download=False)
-
+		omdData = OrganicMaterialsDatabase(args.datapath, download=False, load_only=[args.property], environment_provider=environment_provider)
+		split_path = os.path.join(args.model_path, "split.npz")
 		train, val, test = spk.train_test_split(
 			data=omdData,
 			num_train=9000,
 			num_val=1000,
-			split_file=os.path.join(args.model_path, "split.npz"),
+			split_file=split_path
 		)
-		train_loader = spk.AtomsLoader(train, batch_size=32, shuffle=True)
-		val_loader = spk.AtomsLoader(val, batch_size=32)
+		train_loader = spk.AtomsLoader(train, batch_size=100, sampler=RandomSampler(train), num_workers=4, pin_memory=True)
+		val_loader = spk.AtomsLoader(val, batch_size=100, num_workers=2, pin_memory=True)
 		atomref = omdData.get_atomref(args.property)
-		means, stddevs = train_loader.get_statistics(
-			args.property, get_divide_by_atoms(args),atomref
-		)
-		model_train = model(args,omdData,atomref, means, stddevs)
+		mean, stddev = get_statistics(
+	        args=args,
+	        split_path=split_path,
+	        train_loader=train_loader,
+	        atomref=atomref,
+	        divide_by_atoms=get_divide_by_atoms(args),
+	        logging=logging
+        )
+		# means, stddevs = train_loader.get_statistics(
+		# 	args.property, get_divide_by_atoms(args),atomref
+		# )
+		model_train = model(args,omdData,atomref, mean, stddev)
 		trainer = train_model(args,model_train,train_loader,val_loader)
+		print('started training')
 		trainer.train(device=device, n_epochs=args.n_epochs)
-		sch_model = torch.load(os.path.join(omdb, 'best_model'))
-		test_loader = spk.AtomsLoader(test, batch_size=32)
+		print('training finished')
+		# sch_model = torch.load(os.path.join(omdb, 'best_model'))
+		# test_loader = spk.AtomsLoader(test, batch_size=32, num_workers=2, pin_memory=True)
 
-		err = 0
-		print(len(test_loader))
-		for count, batch in enumerate(test_loader):
-		    # move batch to GPU, if necessary
-		    batch = {k: v.to(device) for k, v in batch.items()}
+		# err = 0
+		# print(len(test_loader))
+		# for count, batch in enumerate(test_loader):
+		#     # move batch to GPU, if necessary
+		#     batch = {k: v.to(device) for k, v in batch.items()}
 
-		    # apply model
-		    pred = sch_model(batch)
+		#     # apply model
+		#     pred = sch_model(batch)
 
-		    # calculate absolute error
-		    tmp = torch.sum(torch.abs(pred[args.property]-batch[args.property]))
-		    tmp = tmp.detach().cpu().numpy() # detach from graph & convert to numpy
-		    err += tmp
+		#     # calculate absolute error
+		#     tmp = torch.sum(torch.abs(pred[args.property]-batch[args.property]))
+		#     tmp = tmp.detach().cpu().numpy() # detach from graph & convert to numpy
+		#     err += tmp
 
-		    # log progress
-		    percent = '{:3.2f}'.format(count/len(test_loader)*100)
-		    print('Progress:', percent+'%'+' '*(5-len(percent)), end="\r")
+		#     # log progress
+		#     percent = '{:3.2f}'.format(count/len(test_loader)*100)
+		#     print('Progress:', percent+'%'+' '*(5-len(percent)), end="\r")
 
-		err /= len(test)
-		print('Test MAE', np.round(err, 2), 'eV =',
-		      np.round(err / (kcal/mol), 2), 'kcal/mol')
+		# err /= len(test)
+		# print('Test MAE', np.round(err, 2), 'eV =',
+		#       np.round(err / (kcal/mol), 2), 'kcal/mol')
 		
 		#plot results
 		plot_results()

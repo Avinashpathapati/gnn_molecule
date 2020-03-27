@@ -13,6 +13,8 @@ def build_parser():
 
 	parser.add_option("-m", "--model_path",
 				  action="store", type="string", dest="model_path")
+	parser.add_option("-e", "--model",
+				  action="store", type="string", dest="model")
 
 	parser.add_option("-r", "--property",
 				  action="store", type="string", dest="property")
@@ -26,6 +28,8 @@ def build_parser():
 
 	parser.add_option("-l", "--lr",
 				  action="store", type=float, dest="lr", default=0.001)
+
+
 
 
 	# parser.add_option("-r", "--data_reg",
