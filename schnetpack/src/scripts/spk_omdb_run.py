@@ -70,7 +70,7 @@ def train_model(args,model,train_loader,val_loader):
 		trn.CSVHook(log_path=args.model_path, metrics=metrics),
 		trn.ReduceLROnPlateauHook(
         optimizer,
-        patience=10, factor=0.6, min_lr=1e-6,window_length=1,
+        patience=5, factor=0.6, min_lr=1e-6,window_length=1,
         stop_after_min=True
         )
 	]
@@ -122,7 +122,7 @@ def main(args):
 		if not os.path.exists('omdb'):
 			os.makedirs(omdb)
 
-		omdData = OrganicMaterialsDatabase(args.datapath, download=False, load_only=[args.property], environment_provider=environment_provider)
+		omdData = OrganicMaterialsDatabase(args.datapath, download=True, load_only=[args.property], environment_provider=environment_provider)
 		split_path = os.path.join(args.model_path, "split.npz")
 		train, val, test = spk.train_test_split(
 			data=omdData,
