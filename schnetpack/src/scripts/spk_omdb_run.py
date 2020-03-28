@@ -35,7 +35,7 @@ def simple_loss_fn(args):
 def model(args,omdData,atomrefs, means, stddevs):
 
 	schnet = spk.representation.SchNet(
-		n_atom_basis=64, n_filters=64, n_gaussians=25, n_interactions=3,
+		n_atom_basis=args.features, n_filters=args.features, n_gaussians=50, n_interactions=6,
 		cutoff=5.0, cutoff_network=spk.nn.cutoff.CosineCutoff
 	)
 	output_module = get_output_module(
@@ -70,7 +70,7 @@ def train_model(args,model,train_loader,val_loader):
 		trn.CSVHook(log_path=args.model_path, metrics=metrics),
 		trn.ReduceLROnPlateauHook(
         optimizer,
-        patience=5, factor=0.6, min_lr=1e-6,window_length=1,
+        patience=25, factor=0.8, min_lr=1e-6,window_length=1,
         stop_after_min=True
         )
 	]
