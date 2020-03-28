@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from schnetpack.nn.base import Dense
 from schnetpack import Properties
@@ -212,7 +213,7 @@ class SchNet(nn.Module):
         atom_mask = inputs[Properties.atom_mask]
 
         # get atom embeddings for the input atomic numbers
-        x = self.embedding(atomic_numbers)
+        x = F.relu(self.embedding(atomic_numbers))
 
         if False and self.charged_systems and Properties.charge in inputs.keys():
             n_atoms = torch.sum(atom_mask, dim=1, keepdim=True)
