@@ -130,55 +130,52 @@ def main(args):
 			num_val=1000,
 			split_file=split_path
 		)
-		print(len(train))
-		print(len(val))
-		print(len(test))
-		# train_loader = spk.AtomsLoader(train, batch_size=32, sampler=RandomSampler(train), num_workers=4, pin_memory=True)
-		# val_loader = spk.AtomsLoader(val, batch_size=32, num_workers=2, pin_memory=True)
-		# atomref = omdData.get_atomref(args.property)
-		# mean, stddev = get_statistics(
-	 #        args=args,
-	 #        split_path=split_path,
-	 #        train_loader=train_loader,
-	 #        atomref=atomref,
-	 #        divide_by_atoms=get_divide_by_atoms(args),
-	 #        logging=logging
-  #       )
-		# # means, stddevs = train_loader.get_statistics(
-		# # 	args.property, get_divide_by_atoms(args),atomref
-		# # )
-		# model_train = model(args,omdData,atomref, mean, stddev)
-		# trainer = train_model(args,model_train,train_loader,val_loader)
-		# print('started training')
-		# trainer.train(device=device, n_epochs=args.n_epochs)
-		# print('training finished')
-		# sch_model = torch.load(os.path.join(args.model_path, 'best_model'))
-		# test_loader = spk.AtomsLoader(test, batch_size=32, num_workers=2, pin_memory=True)
+		train_loader = spk.AtomsLoader(train, batch_size=32, sampler=RandomSampler(train))
+		val_loader = spk.AtomsLoader(val, batch_size=32)
+		test_loader = spk.AtomsLoader(test, batch_size=32)
+		atomref = omdData.get_atomref(args.property)
+		mean, stddev = get_statistics(
+	        args=args,
+	        split_path=split_path,
+	        train_loader=train_loader,
+	        atomref=atomref,
+	        divide_by_atoms=get_divide_by_atoms(args),
+	        logging=logging
+        )
+		# means, stddevs = train_loader.get_statistics(
+		# 	args.property, get_divide_by_atoms(args),atomref
+		# )
+		model_train = model(args,omdData,atomref, mean, stddev)
+		trainer = train_model(args,model_train,train_loader,val_loader)
+		print('started training')
+		trainer.train(device=device, n_epochs=args.n_epochs)
+		print('training finished')
+		sch_model = torch.load(os.path.join(args.model_path, 'best_model'))
 
-		# err = 0
-		# print(len(test_loader))
-		# for count, batch in enumerate(test_loader):
-		#     # move batch to GPU, if necessary
-		#     batch = {k: v.to(device) for k, v in batch.items()}
+		err = 0
+		print(len(test_loader))
+		for count, batch in enumerate(test_loader):
+		    # move batch to GPU, if necessary
+		    batch = {k: v.to(device) for k, v in batch.items()}
 
-		#     # apply model
-		#     pred = sch_model(batch)
+		    # apply model
+		    pred = sch_model(batch)
 
-		#     # calculate absolute error
-		#     tmp = torch.sum(torch.abs(pred[args.property]-batch[args.property]))
-		#     tmp = tmp.detach().cpu().numpy() # detach from graph & convert to numpy
-		#     err += tmp
+		    # calculate absolute error
+		    tmp = torch.sum(torch.abs(pred[args.property]-batch[args.property]))
+		    tmp = tmp.detach().cpu().numpy() # detach from graph & convert to numpy
+		    err += tmp
 
-		#     # log progress
-		#     percent = '{:3.2f}'.format(count/len(test_loader)*100)
-		#     print('Progress:', percent+'%'+' '*(5-len(percent)), end="\r")
+		    # log progress
+		    percent = '{:3.2f}'.format(count/len(test_loader)*100)
+		    print('Progress:', percent+'%'+' '*(5-len(percent)), end="\r")
 
-		# err /= len(test)
-		# print('Test MAE', np.round(err, 2), 'eV =',
-		#       np.round(err / (kcal/mol), 2), 'kcal/mol')
+		err /= len(test)
+		print('Test MAE', np.round(err, 2), 'eV =',
+		      np.round(err / (kcal/mol), 2), 'kcal/mol')
 		
-		# #plot results
-		# plot_results(args)
+		#plot results
+		plot_results(args)
 
 	elif args.mode == "pred":
 		print('predictionsss')
