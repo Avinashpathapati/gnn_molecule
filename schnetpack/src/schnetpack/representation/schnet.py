@@ -140,6 +140,8 @@ class SchNet(nn.Module):
         # make a lookup table to store embeddings for each element (up to atomic
         # number max_z) each of which is a vector of size n_atom_basis
         self.embedding = nn.Embedding(max_z, n_atom_basis, padding_idx=0)
+        self.linear1 = nn.linear(n_atom_basis, 128, padding_idx=0)
+        self.dropout = nn.dropout(0.2)
 
         # layer for computing interatomic distances
         self.distances = AtomDistances()
@@ -205,6 +207,11 @@ class SchNet(nn.Module):
         """
         # get tensors from input dictionary
         atomic_numbers = inputs[Properties.Z]
+        #implementing dropout s3754715
+        if self.training:
+            binomial = torch.distributions.binomial.Binomial(probs=0.8)
+            return atomic_numbers * binomial.sample(atomic_numbers.size()) * (1.0/(1-self.p))
+
         positions = inputs[Properties.R]
         cell = inputs[Properties.cell]
         cell_offset = inputs[Properties.cell_offset]
@@ -213,7 +220,10 @@ class SchNet(nn.Module):
         atom_mask = inputs[Properties.atom_mask]
 
         # get atom embeddings for the input atomic numbers
-        x = F.relu(self.embedding(atomic_numbers))
+        #addedd relu s3754715
+        x = self.embedding(atomic_numbers)
+        x = self.linear1(x)
+        x = self.dropout(x)
 
         if False and self.charged_systems and Properties.charge in inputs.keys():
             n_atoms = torch.sum(atom_mask, dim=1, keepdim=True)
