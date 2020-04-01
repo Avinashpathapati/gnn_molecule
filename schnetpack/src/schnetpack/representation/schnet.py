@@ -207,10 +207,13 @@ class SchNet(nn.Module):
         """
         # get tensors from input dictionary
         atomic_numbers = inputs[Properties.Z]
-        #implementing dropout s3754715
-        if self.training:
-            binomial = torch.distributions.binomial.Binomial(probs=0.8)
-            return atomic_numbers * binomial.sample(atomic_numbers.size()) * (1.0/(1-self.p))
+        print('----------------')
+        print(self.training)
+        print('------------------')
+        # #implementing dropout s3754715
+        # if self.training:
+        #     binomial = torch.distributions.binomial.Binomial(probs=0.8)
+        #     return atomic_numbers * binomial.sample(atomic_numbers.size()) * (1.0/(1-self.p))
 
         positions = inputs[Properties.R]
         cell = inputs[Properties.cell]
@@ -222,8 +225,8 @@ class SchNet(nn.Module):
         # get atom embeddings for the input atomic numbers
         #addedd relu s3754715
         x = self.embedding(atomic_numbers)
-        x = self.linear1(x)
-        x = self.dropout(x)
+        #x = self.linear1(x)
+        #x = self.dropout(x)
 
         if False and self.charged_systems and Properties.charge in inputs.keys():
             n_atoms = torch.sum(atom_mask, dim=1, keepdim=True)
@@ -243,7 +246,7 @@ class SchNet(nn.Module):
         # compute interaction block to update atomic embeddings
         for interaction in self.interactions:
             v = interaction(x, r_ij, neighbors, neighbor_mask, f_ij=f_ij)
-            x = x + v
+            x = x + F.relu(v)
             if self.return_intermediate:
                 xs.append(x)
 

@@ -35,7 +35,7 @@ def simple_loss_fn(args):
 def model(args,omdData,atomrefs, means, stddevs):
 
 	schnet = spk.representation.SchNet(
-		n_atom_basis=args.features, n_filters=args.features, n_gaussians=50, n_interactions=6,
+		n_atom_basis=args.features, n_filters=args.features, n_gaussians=75, n_interactions=6,
 		cutoff=5.0, cutoff_network=spk.nn.cutoff.CosineCutoff
 	)
 	output_module = get_output_module(
@@ -171,8 +171,8 @@ def main(args):
 		    print('Progress:', percent+'%'+' '*(5-len(percent)), end="\r")
 
 		err /= len(test)
-		print('Test MAE', np.round(err, 2), 'eV =',
-		      np.round(err / (kcal/mol), 2), 'kcal/mol')
+		print('Test MAE', np.round(err, 3), 'eV =',
+		      np.round(err / (kcal/mol), 3), 'kcal/mol')
 		
 		#plot results
 		plot_results(args)
