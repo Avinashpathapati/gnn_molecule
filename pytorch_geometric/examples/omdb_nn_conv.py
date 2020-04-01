@@ -12,7 +12,7 @@ from torch_geometric.data import DataLoader
 from torch_geometric.utils import remove_self_loops
 
 target = 0
-dim = 24
+dim = 32
 
 
 class MyTransform(object):
@@ -72,12 +72,12 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
         self.lin0 = torch.nn.Linear(dataset.num_features, dim)
 
-        #nn = Sequential(Linear(5, 128), ReLU(), Linear(128, dim * dim))
-        nn = Sequential(Linear(5, dim * dim))
+        nn = Sequential(Linear(5, 128), ReLU(), Linear(128, dim * dim))
+        #nn = Sequential(Linear(5, dim * dim))
         self.conv = NNConv(dim, dim, nn, aggr='mean')
         self.gru = GRU(dim, dim)
 
-        self.set2set = Set2Set(dim, processing_steps=2)
+        self.set2set = Set2Set(dim, processing_steps=1)
         self.lin1 = torch.nn.Linear(2 * dim, dim)
         self.lin2 = torch.nn.Linear(dim, 1)
 
@@ -99,9 +99,9 @@ class Net(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #device = torch.device('cuda')
 model = Net().to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
-                                                       factor=0.7, patience=15,
+                                                       factor=0.7, patience=25,
                                                        min_lr=1e-6)
 
 
@@ -149,7 +149,7 @@ best_val_error = None
 train_loss = []
 val_loss = []
 test_loss = []
-for epoch in range(1, 501):
+for epoch in range(1, 801):
     lr = scheduler.optimizer.param_groups[0]['lr']
     loss = train(epoch)
     val_error = test(val_loader)
@@ -162,4 +162,4 @@ for epoch in range(1, 501):
     print('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '
           'Test MAE: {:.7f}'.format(epoch, lr, loss, val_error, test_error))
 
-plot_results(range(1, 501), train_loss, val_loss, test_loss)
+plot_results(range(1, 801), train_loss, val_loss, test_loss)
