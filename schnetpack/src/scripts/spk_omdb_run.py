@@ -61,7 +61,7 @@ def train_model(args,model,train_loader,val_loader):
 		os.remove(os.path.join(args.model_path,'log.csv'))
 
 	trainable_params = filter(lambda p: p.requires_grad, model.parameters())
-	optimizer = Adam(trainable_params, lr=args.lr)
+	optimizer = Adam(trainable_params, lr=args.lr, weight_decay = 4e-3)
 	metrics = [
 		spk.train.metrics.MeanAbsoluteError(args.property, args.property),
 		spk.train.metrics.RootMeanSquaredError(args.property, args.property),
@@ -153,7 +153,7 @@ def main(args):
 		sch_model = torch.load(os.path.join(args.model_path, 'best_model'))
 
 		err = 0
-		print(len(test_loader))
+		sch_model.eval()
 		for count, batch in enumerate(test_loader):
 		    # move batch to GPU, if necessary
 		    batch = {k: v.to(device) for k, v in batch.items()}
