@@ -50,7 +50,7 @@ class OMDBXYZ(InMemoryDataset):
 	def __init__(self, root, transform=None, pre_transform=None,
 				 pre_filter=None):
 		super(OMDBXYZ, self).__init__(root, transform, pre_transform, pre_filter)
-		self.data, self.slices = np.load(self.processed_paths[0])
+		self.data = pickle.load(self.processed_paths[0])
 
 	@property
 	def raw_file_names(self):
@@ -58,7 +58,7 @@ class OMDBXYZ(InMemoryDataset):
 
 	@property
 	def processed_file_names(self):
-		return 'omdb_data.npz'
+		return 'omdb_data.txt'
 
 	def download(self):
 		url = self.raw_url
@@ -147,6 +147,7 @@ class OMDBXYZ(InMemoryDataset):
 		
 		print('saving data')
 		#torch.save(self.collate(data_list), self.processed_paths[0])
-		np.savez(self.processed_paths[0],np.array(data_list))
+		with open(self.processed_paths[0], 'wb') as fp:
+			pickle.dump(data_list, fp)
 
 
