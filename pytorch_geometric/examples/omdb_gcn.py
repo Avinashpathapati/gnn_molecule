@@ -86,7 +86,7 @@ def train(epoch):
             loss = F.mse_loss(model(data), data.y)
             loss.backward()
             loss_batch += loss.item()
-        loss_all += loss_batch.item() * data_batch.num_graphs
+        loss_all += loss_batch * data_batch.num_graphs
         optimizer.step()
     return loss_all / len(train_loader.dataset)
 
