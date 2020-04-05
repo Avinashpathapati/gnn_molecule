@@ -57,7 +57,6 @@ class Net(torch.nn.Module):
         x = self.linear(x)
         x = x.unsqueeze(2)
         x = torch.transpose(x,2,0)
-        print(x.shape)
         x = self.avp(x)
         return x.view(-1)
 
