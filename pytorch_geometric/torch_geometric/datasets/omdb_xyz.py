@@ -1,7 +1,6 @@
 import os
 import os.path as osp
 import tarfile
-import pickle
 
 import torch
 import torch.nn.functional as F
@@ -50,8 +49,7 @@ class OMDBXYZ(InMemoryDataset):
 	def __init__(self, root, transform=None, pre_transform=None,
 				 pre_filter=None):
 		super(OMDBXYZ, self).__init__(root, transform, pre_transform, pre_filter)
-		with open(self.processed_paths[0], 'rb') as pickle_file:
-			self.data = pickle.load(pickle_file)
+		self.data, self.slices = torch.load(self.processed_paths[0])
 
 	@property
 	def raw_file_names(self):
@@ -59,7 +57,7 @@ class OMDBXYZ(InMemoryDataset):
 
 	@property
 	def processed_file_names(self):
-		return 'omdb_data.txt'
+		return 'omdb_data.pt'
 
 	def download(self):
 		url = self.raw_url
@@ -137,18 +135,14 @@ class OMDBXYZ(InMemoryDataset):
 			if self.pre_transform is not None:
 				data = self.pre_transform(data)
 
-			# print('----------------')
-			# print(data.x.shape)
-			# print(data.edge_index.shape)
-			# print(data.x)
-			# print(data.edge_index)
-			# print('------------------')
+			print('----------------')
+			print(data.x.shape)
+			print(data.edge_index.shape)
+			print(data.x)
+			print(data.edge_index)
+			print('------------------')
 
 			data_list.append(data)
 		
 		print('saving data')
-		#torch.save(self.collate(data_list), self.processed_paths[0])
-		with open(self.processed_paths[0], 'wb') as fp:
-			pickle.dump(data_list, fp)
-
-
+		torch.save(self.collate(data_list), self.processed_paths[0])

@@ -3,7 +3,6 @@ import os
 import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
-import random
 from torch.nn import Sequential, Linear, ReLU, GRU
 
 import torch_geometric.transforms as T
@@ -15,25 +14,16 @@ from torch_geometric.utils import remove_self_loops
 target = 0
 dim = 32
 
+
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'OMDB')
 #transform = T.Compose([MyTransform(), Complete(), T.Distance(norm=False)])
+dataset = OMDBXYZ(path).shuffle()
 
 # Normalize targets to mean = 0 and std = 1.
-dataset = random.shuffle(OMDBXYZ(path))
-y = torch.zeros(len(dataset))
-for i in range(len(dataset)):
-    y[i] = dataset[i].y
-
-mean = y.mean()
-std = y.std()
-
-for i in range(len(dataset)):
-    dataset[i].y = ( dataset[i].y - mean )/std
-
-# mean = dataset.data.y.mean(dim=0, keepdim=True)
-# std = dataset.data.y.std(dim=0, keepdim=True)
-# dataset.data.y = (dataset.data.y - mean) / std
-# mean, std = mean.item(), std.item()
+mean = dataset.data.y.mean(dim=0, keepdim=True)
+std = dataset.data.y.std(dim=0, keepdim=True)
+dataset.data.y = (dataset.data.y - mean) / std
+mean, std = mean.item(), std.item()
 
 # Split datasets.
 train_dataset = dataset[:9000]
@@ -49,7 +39,7 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        self.conv1 = GCNConv(dataset[0].num_features, 128, cached=True)
+        self.conv1 = GCNConv(dataset.num_features, 128, cached=True)
         self.conv2 = GCNConv(128, 64, cached=True)
         self.linear = torch.nn.Linear(64, 1)
         # self.conv1 = ChebConv(data.num_features, 16, K=2)
@@ -86,12 +76,15 @@ def train(epoch):
     model.train()
     loss_all = 0
 
-    for data in train_loader:
+    for data_batch in train_loader:
+        #to extract data object from batch
+        data_batch = data_batch.to(device)
+        data = data_batch.to_data_list()
         data = data.to(device)
         optimizer.zero_grad()
-        loss = F.mse_loss(model(data), data.y)
+        loss = F.mse_loss(model(data), data_batch.y)
         loss.backward()
-        loss_all += loss.item() * data.num_graphs
+        loss_all += loss.item() * data_batch.num_graphs
         optimizer.step()
     return loss_all / len(train_loader.dataset)
 
@@ -100,9 +93,11 @@ def test(loader):
     model.eval()
     error = 0
 
-    for data in loader:
+    for data_batch in loader:
+        data_batch = data_batch.to(device)
+        data = data_batch.to_data_list()
         data = data.to(device)
-        error += (model(data) * std - data.y * std).abs().sum().item()  # MAE
+        error += (model(data) * std - data_batch.y * std).abs().sum().item()  # MAE
     return error / len(loader.dataset)
 
 
