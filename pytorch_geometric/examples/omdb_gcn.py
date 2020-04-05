@@ -42,6 +42,7 @@ class Net(torch.nn.Module):
         self.conv1 = GCNConv(dataset.num_features, 128, cached=False)
         self.conv2 = GCNConv(128, 64, cached=False)
         self.linear = torch.nn.Linear(64, 1)
+        self.avp = torch.nn.AdaptiveAvgPool1d(1)
         # self.conv1 = ChebConv(data.num_features, 16, K=2)
         # self.conv2 = ChebConv(16, data.num_features, K=2)
 
@@ -54,6 +55,8 @@ class Net(torch.nn.Module):
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index)
         x = self.linear(x)
+        x = torch.flatten(x)
+        x = self.avp(x)
         print(x.shape)
         return x.view(-1)
 
