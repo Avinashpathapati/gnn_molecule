@@ -80,7 +80,6 @@ def train(epoch):
         #to extract data object from batch
         data_batch = data_batch.to(device)
         data = data_batch.to_data_list()
-        data = data.to(device)
         optimizer.zero_grad()
         loss = F.mse_loss(model(data), data_batch.y)
         loss.backward()
@@ -96,7 +95,6 @@ def test(loader):
     for data_batch in loader:
         data_batch = data_batch.to(device)
         data = data_batch.to_data_list()
-        data = data.to(device)
         error += (model(data) * std - data_batch.y * std).abs().sum().item()  # MAE
     return error / len(loader.dataset)
 
