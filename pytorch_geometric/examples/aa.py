@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv
+from torch_geometric.datasets import Planetoid
 
 class Net(torch.nn.Module):
     def __init__(self):
@@ -18,6 +19,9 @@ class Net(torch.nn.Module):
         print(x.shape)
         return F.log_softmax(x, dim=1)
 
+
+
+dataset = Planetoid(root='/tmp/Cora', name='Cora')
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
 data = dataset[0].to(device)
