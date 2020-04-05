@@ -54,6 +54,7 @@ class Net(torch.nn.Module):
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index)
         x = self.linear(x)
+        print(x.shape)
         return x.view(-1)
 
 
