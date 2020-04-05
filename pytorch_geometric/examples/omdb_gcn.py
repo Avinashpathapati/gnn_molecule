@@ -39,8 +39,8 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        self.conv1 = GCNConv(dataset.num_features, 128, cached=True)
-        self.conv2 = GCNConv(128, 64, cached=True)
+        self.conv1 = GCNConv(dataset.num_features, 128, cached=False)
+        self.conv2 = GCNConv(128, 64, cached=False)
         self.linear = torch.nn.Linear(64, 1)
         # self.conv1 = ChebConv(data.num_features, 16, K=2)
         # self.conv2 = ChebConv(16, data.num_features, K=2)
