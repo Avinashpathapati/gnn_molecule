@@ -3,6 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
+import random
 from torch.nn import Sequential, Linear, ReLU, GRU
 
 import torch_geometric.transforms as T
@@ -14,16 +15,25 @@ from torch_geometric.utils import remove_self_loops
 target = 0
 dim = 32
 
-
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'OMDB')
 #transform = T.Compose([MyTransform(), Complete(), T.Distance(norm=False)])
-dataset = OMDBXYZ(path).shuffle()
 
 # Normalize targets to mean = 0 and std = 1.
-mean = dataset.data.y.mean(dim=0, keepdim=True)
-std = dataset.data.y.std(dim=0, keepdim=True)
-dataset.data.y = (dataset.data.y - mean) / std
-mean, std = mean.item(), std.item()
+dataset = random.shuffle(OMDBXYZ(path))
+y = torch.zeros(len(dataset))
+for i in range(len(dataset)):
+    y[i] = dataset[i].y
+
+mean = y.mean()
+std = y.std()
+
+for i in range(len(dataset)):
+    dataset[i].y = ( dataset[i].y - mean )/std
+
+# mean = dataset.data.y.mean(dim=0, keepdim=True)
+# std = dataset.data.y.std(dim=0, keepdim=True)
+# dataset.data.y = (dataset.data.y - mean) / std
+# mean, std = mean.item(), std.item()
 
 # Split datasets.
 train_dataset = dataset[:9000]
@@ -39,7 +49,7 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        self.conv1 = GCNConv(dataset.num_features, 128, cached=True)
+        self.conv1 = GCNConv(dataset[0].num_features, 128, cached=True)
         self.conv2 = GCNConv(128, 64, cached=True)
         self.linear = torch.nn.Linear(64, 1)
         # self.conv1 = ChebConv(data.num_features, 16, K=2)
