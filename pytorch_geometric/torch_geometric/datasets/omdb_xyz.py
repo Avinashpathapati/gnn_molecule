@@ -50,7 +50,8 @@ class OMDBXYZ(InMemoryDataset):
 	def __init__(self, root, transform=None, pre_transform=None,
 				 pre_filter=None):
 		super(OMDBXYZ, self).__init__(root, transform, pre_transform, pre_filter)
-		self.data = pickle.load(self.processed_paths[0])
+		with open(self.processed_paths[0], 'rb') as pickle_file:
+			self.data = pickle.load(pickle_file)
 
 	@property
 	def raw_file_names(self):
