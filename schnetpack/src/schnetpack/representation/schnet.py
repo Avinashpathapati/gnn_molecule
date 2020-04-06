@@ -141,7 +141,7 @@ class SchNet(nn.Module):
         # number max_z) each of which is a vector of size n_atom_basis
         self.embedding = nn.Embedding(max_z, n_atom_basis, padding_idx=0)
         # self.linear1 = nn.Linear(n_atom_basis, 128)
-        self.dropout = nn.Dropout(0.5)
+        self.dropout = nn.Dropout(0.3)
 
         # layer for computing interatomic distances
         self.distances = AtomDistances()

@@ -61,7 +61,8 @@ def train_model(args,model,train_loader,val_loader):
 		os.remove(os.path.join(args.model_path,'log.csv'))
 
 	trainable_params = filter(lambda p: p.requires_grad, model.parameters())
-	optimizer = Adam(trainable_params, lr=args.lr, weight_decay = 4e-7)
+	optimizer = Adam(trainable_params, lr=args.lr, 
+		# weight_decay = 4e-7)
 	metrics = [
 		spk.train.metrics.MeanAbsoluteError(args.property, args.property),
 		spk.train.metrics.RootMeanSquaredError(args.property, args.property),
