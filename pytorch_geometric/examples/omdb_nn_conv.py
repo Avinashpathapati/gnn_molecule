@@ -94,6 +94,7 @@ class Net(torch.nn.Module):
             out, h = self.gru(m.unsqueeze(0), h)
             out = out.squeeze(0)
 
+        print(out.shape)
         out = self.set2set(out, data.batch)
         print(out.shape)
         out = F.relu(self.lin1(out))
