@@ -3,6 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
+import numpy as np
 from torch.nn import Sequential, Linear, ReLU, GRU
 
 import torch_geometric.transforms as T
