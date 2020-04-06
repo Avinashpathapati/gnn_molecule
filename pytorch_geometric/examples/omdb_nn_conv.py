@@ -62,6 +62,7 @@ train_dataset = dataset[:9000]
 val_dataset = dataset[9000:10000]
 test_dataset = dataset[10000:]
 
+
 val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True)
@@ -82,7 +83,10 @@ class Net(torch.nn.Module):
         self.lin2 = torch.nn.Linear(dim, 1)
 
     def forward(self, data):
+        print('---------------')
+        print(data.x.shape)
         out = F.relu(self.lin0(data.x))
+        print(out.shape)
         h = out.unsqueeze(0)
 
         for i in range(2):
@@ -91,8 +95,12 @@ class Net(torch.nn.Module):
             out = out.squeeze(0)
 
         out = self.set2set(out, data.batch)
+        print(out.shape)
         out = F.relu(self.lin1(out))
+        print(out.shape)
         out = self.lin2(out)
+        print(out.shape)
+        print('-----------------')
         return out.view(-1)
 
 
