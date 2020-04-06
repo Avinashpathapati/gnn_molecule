@@ -64,7 +64,7 @@ class Net(torch.nn.Module):
         x = self.conv3(x, edge_index)
         print(x.shape)
         # x = F.dropout(x, training=self.training)
-        x = self.set2set(x, torch.zeros(1))
+        x = self.set2set(x, torch.zeros(1, dtype=torch.int32))
         print(x.shape)
         x = F.relu(self.linear1(x))
         print(x.shape)
