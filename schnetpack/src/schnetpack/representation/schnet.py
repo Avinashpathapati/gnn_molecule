@@ -141,7 +141,7 @@ class SchNet(nn.Module):
         # number max_z) each of which is a vector of size n_atom_basis
         self.embedding = nn.Embedding(max_z, n_atom_basis, padding_idx=0)
         # self.linear1 = nn.Linear(n_atom_basis, 128)
-        # self.dropout = nn.Dropout(0.2)
+        self.dropout = nn.Dropout(0.5)
 
         # layer for computing interatomic distances
         self.distances = AtomDistances()
@@ -226,7 +226,7 @@ class SchNet(nn.Module):
         #addedd relu s3754715
         x = self.embedding(atomic_numbers)
         #x = self.linear1(x)
-        #x = self.dropout(x)
+        x = self.dropout(x)
 
         if False and self.charged_systems and Properties.charge in inputs.keys():
             n_atoms = torch.sum(atom_mask, dim=1, keepdim=True)
