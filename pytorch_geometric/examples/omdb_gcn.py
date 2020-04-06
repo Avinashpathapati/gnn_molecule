@@ -41,7 +41,7 @@ class Net(torch.nn.Module):
 
         self.conv1 = GCNConv(dataset.num_features, 256, cached=False)
         self.conv2 = GCNConv(256, 128, cached=False)
-        self.conv3 = GCNConv(128, 64, cached=False)
+        self.conv3 = GCNConv(128, 32, cached=False)
         self.set2set = Set2Set(32, processing_steps=1)
         self.linear1 = torch.nn.Linear(64, 128)
         self.linear2 = torch.nn.Linear(128, 1)
@@ -63,7 +63,7 @@ class Net(torch.nn.Module):
         x = self.conv3(x, edge_index)
         print(x.shape)
         # x = F.dropout(x, training=self.training)
-        x = self.set2set(x,data.batch)
+        x = self.set2set(x)
         print(x.shape)
         x = F.relu(self.linear1(x))
         print(x.shape)
