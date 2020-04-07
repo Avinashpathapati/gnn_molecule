@@ -226,7 +226,7 @@ class SchNet(nn.Module):
         #addedd relu s3754715
         x = self.embedding(atomic_numbers)
         #x = self.linear1(x)
-        x = self.dropout(x, self.training)
+        x = self.dropout(x)
 
         if False and self.charged_systems and Properties.charge in inputs.keys():
             n_atoms = torch.sum(atom_mask, dim=1, keepdim=True)
