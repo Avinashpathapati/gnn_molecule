@@ -44,9 +44,10 @@ class Net(torch.nn.Module):
         self.conv2 = GCNConv(256, 128, cached=False)
         self.conv3 = GCNConv(128, 32, cached=False)
         self.set2set = Set2Set(32, processing_steps=1)
-        self.linear1 = torch.nn.Linear(64, 128)
-        self.linear2 = torch.nn.Linear(128, 32)
-        self.linear3 = torch.nn.Linear(32, 1)
+        self.linear1 = torch.nn.Linear(64, 256)
+        self.linear2 = torch.nn.Linear(256, 128)
+        self.linear3 = torch.nn.Linear(128, 32)
+        self.linear4 = torch.nn.Linear(32, 1)
         #self.avp = torch.nn.AdaptiveAvgPool1d(1)
         # self.conv1 = ChebConv(data.num_features, 16, K=2)
         # self.conv2 = ChebConv(16, data.num_features, K=2)
@@ -72,6 +73,8 @@ class Net(torch.nn.Module):
         x = self.linear2(x)
 
         x = self.linear3(x)
+
+        x = self.linear4(x)
 
         #print(x.shape)
         # x = x.unsqueeze(2)
