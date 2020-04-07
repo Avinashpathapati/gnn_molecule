@@ -45,7 +45,8 @@ class Net(torch.nn.Module):
         self.conv3 = GCNConv(128, 32, cached=False)
         self.set2set = Set2Set(32, processing_steps=1)
         self.linear1 = torch.nn.Linear(64, 128)
-        self.linear2 = torch.nn.Linear(128, 1)
+        self.linear2 = torch.nn.Linear(128, 32)
+        self.linear3 = torch.nn.Linear(32, 1)
         #self.avp = torch.nn.AdaptiveAvgPool1d(1)
         # self.conv1 = ChebConv(data.num_features, 16, K=2)
         # self.conv2 = ChebConv(16, data.num_features, K=2)
@@ -57,10 +58,10 @@ class Net(torch.nn.Module):
         x, edge_index = data.x, data.edge_index
         x = F.relu(self.conv1(x, edge_index))
         #print(x.shape)
-        x = F.dropout(x, training=self.training)
+        #x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index)
         #print(x.shape)
-        x = F.dropout(x, training=self.training)
+        #x = F.dropout(x, training=self.training)
         x = self.conv3(x, edge_index)
         #print(x.shape)
         # x = F.dropout(x, training=self.training)
@@ -69,6 +70,9 @@ class Net(torch.nn.Module):
         x = F.relu(self.linear1(x))
         #print(x.shape)
         x = self.linear2(x)
+
+        x = self.linear3(x)
+
         #print(x.shape)
         # x = x.unsqueeze(2)
         # x = torch.transpose(x,2,0)
