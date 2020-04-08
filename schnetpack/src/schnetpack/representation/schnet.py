@@ -140,7 +140,7 @@ class SchNet(nn.Module):
         # make a lookup table to store embeddings for each element (up to atomic
         # number max_z) each of which is a vector of size n_atom_basis
         self.embedding = nn.Embedding(max_z, n_atom_basis, padding_idx=0)
-        self.linear1 = nn.Linear(n_atom_basis, 64)
+        #self.linear1 = nn.Linear(n_atom_basis, 64)
         #self.dropout = nn.Dropout(0.05)
 
         # layer for computing interatomic distances
@@ -247,7 +247,8 @@ class SchNet(nn.Module):
         # compute interaction block to update atomic embeddings
         for interaction in self.interactions:
             v = interaction(x, r_ij, neighbors, neighbor_mask, f_ij=f_ij)
-            x = x + F.relu(v)
+            #x = x + F.relu(v)
+            x = x + v
             if self.return_intermediate:
                 xs.append(x)
 
