@@ -35,7 +35,7 @@ def simple_loss_fn(args):
 def model(args,omdData,atomrefs, means, stddevs):
 
 	schnet = spk.representation.SchNet(
-		n_atom_basis=args.features, n_filters=args.features, n_gaussians=75, n_interactions=6,
+		n_atom_basis=args.features, n_filters=args.features, n_gaussians=50, n_interactions=6,
 		cutoff=5.0, cutoff_network=spk.nn.cutoff.CosineCutoff
 	)
 	output_module = get_output_module(
@@ -61,7 +61,7 @@ def train_model(args,model,train_loader,val_loader):
 		os.remove(os.path.join(args.model_path,'log.csv'))
 
 	trainable_params = filter(lambda p: p.requires_grad, model.parameters())
-	optimizer = Adam(trainable_params, lr=args.lr , weight_decay = 4e-7
+	optimizer = Adam(trainable_params, lr=args.lr , weight_decay = 4e-8
 		)
 	metrics = [
 		spk.train.metrics.MeanAbsoluteError(args.property, args.property),
