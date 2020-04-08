@@ -12,7 +12,7 @@ from torch_geometric.data import DataLoader
 from torch_geometric.utils import remove_self_loops
 
 target = 0
-dim = 32
+dim = 24
 
 
 class MyTransform(object):
@@ -73,7 +73,7 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
         self.lin0 = torch.nn.Linear(dataset.num_features, dim)
 
-        nn = Sequential(Linear(5, 128), ReLU(), Linear(128, dim * dim))
+        nn = Sequential(Linear(5, 64), ReLU(), Linear(64, dim * dim))
         #nn = Sequential(Linear(5, dim * dim))
         self.conv = NNConv(dim, dim, nn, aggr='mean')
         self.gru = GRU(dim, dim)
