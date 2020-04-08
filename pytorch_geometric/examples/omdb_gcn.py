@@ -68,24 +68,24 @@ class Net(torch.nn.Module):
         #x = F.dropout(x, training=self.training)
         x = F.relu(self.conv2(x, edge_index))
         x = F.relu(self.conv3(x, edge_index))
-        # x = F.relu(self.conv4(x, edge_index))
-        # x = F.relu(self.conv5(x, edge_index))
-        #print(x.shape)
+        x = F.relu(self.conv4(x, edge_index))
+        x = F.relu(self.conv5(x, edge_index))
+        print(x.shape)
         #x = F.dropout(x, training=self.training)
         #x = F.relu(self.conv3(x, edge_index))
         #print(x.shape)
         # x = F.dropout(x, training=self.training)
         x = self.set2set(x, torch.zeros(1, dtype=torch.long))
         #print(x.shape)
-        x = F.relu(self.linear1(x))
-        #print(x.shape)
-        x = F.relu(self.linear2(x))
+        # x = F.relu(self.linear1(x))
+        # #print(x.shape)
+        # x = F.relu(self.linear2(x))
 
         x = F.relu(self.linear3(x))
 
-        x = F.relu(self.linear4(x))
+        # x = F.relu(self.linear4(x))
 
-        x = F.relu(self.linear5(x))
+        # x = F.relu(self.linear5(x))
 
         x = F.relu(self.linear6(x))
 
