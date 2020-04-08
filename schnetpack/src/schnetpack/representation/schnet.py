@@ -247,8 +247,7 @@ class SchNet(nn.Module):
         # compute interaction block to update atomic embeddings
         for interaction in self.interactions:
             v = interaction(x, r_ij, neighbors, neighbor_mask, f_ij=f_ij)
-            #x = x + F.relu(v)
-            x = x + v
+            x = x + F.relu(v)
             if self.return_intermediate:
                 xs.append(x)
 
