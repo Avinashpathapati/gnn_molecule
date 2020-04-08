@@ -40,11 +40,11 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        self.conv1 = GCNConv(dataset.num_features, 96, cached=False)
-        self.conv2 = GCNConv(96, 128, cached=False)
-        self.conv3 = GCNConv(128, 384, cached=False)
-        self.conv4 = GCNConv(384, 384, cached=False)
-        self.conv5 = GCNConv(384, 256, cached=False)
+        self.conv1 = GCNConv(dataset.num_features, 64, cached=False)
+        self.conv2 = GCNConv(64, 128, cached=False)
+        self.conv3 = GCNConv(128, 256, cached=False)
+        # self.conv4 = GCNConv(384, 384, cached=False)
+        # self.conv5 = GCNConv(384, 256, cached=False)
         self.set2set = Set2Set(256, processing_steps=3)
 
         #self.linear1 = torch.nn.Linear(512, 512)
@@ -68,8 +68,8 @@ class Net(torch.nn.Module):
         #x = F.dropout(x, training=self.training)
         x = F.relu(self.conv2(x, edge_index))
         x = F.relu(self.conv3(x, edge_index))
-        x = F.relu(self.conv4(x, edge_index))
-        x = F.relu(self.conv5(x, edge_index))
+        # x = F.relu(self.conv4(x, edge_index))
+        # x = F.relu(self.conv5(x, edge_index))
         #print(x.shape)
         #x = F.dropout(x, training=self.training)
         #x = F.relu(self.conv3(x, edge_index))
