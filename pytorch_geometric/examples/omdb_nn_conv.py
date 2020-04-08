@@ -83,10 +83,10 @@ class Net(torch.nn.Module):
         self.lin2 = torch.nn.Linear(dim, 1)
 
     def forward(self, data):
-        print('---------------')
-        print(data.x.shape)
+        #print('---------------')
+        #print(data.x.shape)
         out = F.relu(self.lin0(data.x))
-        print(out.shape)
+        #print(out.shape)
         h = out.unsqueeze(0)
 
         for i in range(2):
@@ -94,14 +94,14 @@ class Net(torch.nn.Module):
             out, h = self.gru(m.unsqueeze(0), h)
             out = out.squeeze(0)
 
-        print(out.shape)
+        #print(out.shape)
         out = self.set2set(out, data.batch)
-        print(out.shape)
+        #print(out.shape)
         out = F.relu(self.lin1(out))
-        print(out.shape)
+        #print(out.shape)
         out = self.lin2(out)
-        print(out.shape)
-        print('-----------------')
+        #print(out.shape)
+        #print('-----------------')
         return out.view(-1)
 
 
