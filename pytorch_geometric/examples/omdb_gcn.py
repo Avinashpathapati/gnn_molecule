@@ -70,7 +70,7 @@ class Net(torch.nn.Module):
         x = F.relu(self.conv3(x, edge_index))
         x = F.relu(self.conv4(x, edge_index))
         x = F.relu(self.conv5(x, edge_index))
-        print(x.shape)
+        #print(x.shape)
         #x = F.dropout(x, training=self.training)
         #x = F.relu(self.conv3(x, edge_index))
         #print(x.shape)
