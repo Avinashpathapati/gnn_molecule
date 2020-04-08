@@ -209,6 +209,7 @@ class SchNet(nn.Module):
         atomic_numbers = inputs[Properties.Z]
         print('----------------')
         print(self.training)
+        print(inputs)
         print('------------------')
         # #implementing dropout s3754715
         # if self.training:
