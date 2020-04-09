@@ -10,6 +10,7 @@ from torch_geometric.datasets import OMDBXYZ
 from torch_geometric.nn import NNConv, Set2Set
 from torch_geometric.data import DataLoader
 from torch_geometric.utils import remove_self_loops
+import logging
 
 target = 0
 dim = 32
@@ -168,7 +169,7 @@ for epoch in range(1, 501):
     test_error = test(test_loader)
     test_loss.append(test_error)
 
-    print('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '
+    logging.warning('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '
           'Test MAE: {:.7f}'.format(epoch, lr, loss, val_error, test_error))
 
 plot_results(range(1, 501), train_loss, val_loss, test_loss)
