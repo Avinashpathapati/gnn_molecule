@@ -225,7 +225,7 @@ class SchNet(nn.Module):
         # get atom embeddings for the input atomic numbers
         #addedd relu s3754715
         x = self.embedding(atomic_numbers)
-        #x = F.relu(self.linear1(x))
+        x = F.relu(self.linear1(x))
         #x = self.dropout(x)
 
         if False and self.charged_systems and Properties.charge in inputs.keys():
