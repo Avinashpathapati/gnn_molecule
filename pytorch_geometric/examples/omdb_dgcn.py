@@ -3,13 +3,15 @@ import os
 import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential, Linear, ReLU, GRU
+from torch.nn import Sequential as Seq, Dropout, Linear as Lin
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OMDBXYZ
 from torch_geometric.nn import NNConv, DynamicEdgeConv, Set2Set
 from torch_geometric.data import DataLoader
 from torch_geometric.utils import remove_self_loops
+
+from pointnet2_classification import MLP
 import logging
 
 target = 0
@@ -85,6 +87,7 @@ class Net(torch.nn.Module):
     def forward(self, data):
         x, pos, batch = data.x, data.pos, data.batch
         x0 = torch.cat([x, pos], dim=-1)
+        print(x0.shape)
         x1 = self.conv1(x0, batch)
         x2 = self.conv2(x1, batch)
         x3 = self.conv3(x2, batch)
