@@ -49,7 +49,8 @@ class Complete(object):
 
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'OMDB')
-transform = T.Compose([MyTransform(), Complete(), T.Distance(norm=False)])
+transform = T.Compose([MyTransform(), Complete(), T.Distance(norm=False), 
+    T.RandomTranslate(0.01), T.RandomRotate(15, axis=0), T.RandomRotate(15, axis=1), T.RandomRotate(15, axis=2)])
 dataset = OMDBXYZ(path,transform=transform).shuffle()
 
 # Normalize targets to mean = 0 and std = 1.
