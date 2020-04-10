@@ -109,12 +109,17 @@ def train(epoch):
     model.train()
     loss_all = 0
 
-    for data in train_loader:
-        data = data.to(device)
+    for data_batch in train_loader:
+        #to extract data object from batch
+        data_batch = data_batch.to(device)
+        data_list = data_batch.to_data_list()
         optimizer.zero_grad()
-        loss = F.mse_loss(model(data), data.y)
-        loss.backward()
-        loss_all += loss.item() * data.num_graphs
+        loss_batch = 0
+        for data in data_list:
+            loss = F.mse_loss(model(data), data.y)
+            loss.backward()
+            loss_batch += loss.item()
+        loss_all += loss_batch
         optimizer.step()
     return loss_all / len(train_loader.dataset)
 
@@ -123,9 +128,12 @@ def test(loader):
     model.eval()
     error = 0
 
-    for data in loader:
-        data = data.to(device)
-        error += (model(data) * std - data.y * std).abs().sum().item()  # MAE
+    for data_batch in loader:
+        data_batch = data_batch.to(device)
+        data_list = data_batch.to_data_list()
+        for data in data_list:
+            error += (model(data) * std - data.y * std).abs().sum().item()  # MAE
+    
     return error / len(loader.dataset)
 
 
