@@ -89,7 +89,7 @@ class Net(torch.nn.Module):
 
         #print(x.shape)
         x0 = torch.cat([x, pos], dim=-1)
-        print(x0.shape)
+        #print(x0.shape)
         x1 = self.conv1(x0, batch)
         #print(x1.shape)
         x2 = self.conv2(x1, batch)
@@ -100,9 +100,9 @@ class Net(torch.nn.Module):
         #print(out.shape)
         out = self.mlp(out)
         #print(out.shape)
-        out = out.view(-1).mean()
-        print(out)
-        return out
+        out = out.view(-1).max()
+        #print(out)
+        return out.view(-1)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
