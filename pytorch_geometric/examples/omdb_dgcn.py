@@ -85,7 +85,7 @@ class Net(torch.nn.Module):
                        Dropout(0.5), Lin(128, 1))
 
     def forward(self, data):
-        x, pos, batch = data.x, data.pos, torch.zeros(data.x.shape[0], dtype=torch.long)
+        x, pos, batch = data.x, data.pos, 
 
         #print(x.shape)
         x0 = torch.cat([x, pos], dim=-1)
@@ -112,7 +112,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
                                                        factor=0.8, patience=25,
                                                        min_lr=1e-6)
-
+batch_num = torch.zeros(data.x.shape[0], dtype=torch.long, device = device)
 
 def train(epoch):
     model.train()
