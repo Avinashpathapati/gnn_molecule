@@ -88,12 +88,12 @@ class Net(torch.nn.Module):
         x, pos, batch = data.x, data.pos, torch.zeros(data.x.shape[0], dtype=torch.long)
 
         x0 = torch.cat([x, pos], dim=-1)
-        print(x0.shape)
         x1 = self.conv1(x0, batch)
         x2 = self.conv2(x1, batch)
         x3 = self.conv3(x2, batch)
         out = self.lin1(torch.cat([x1, x2, x3], dim=1))
         out = self.mlp(out)
+        print(out.shape)
         return out.view(-1)
 
 
