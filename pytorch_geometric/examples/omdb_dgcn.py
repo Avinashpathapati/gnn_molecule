@@ -85,8 +85,7 @@ class Net(torch.nn.Module):
                        Dropout(0.5), Lin(128, 1))
 
     def forward(self, data):
-        x, pos, batch = data.x, data.pos, 
-        batch_num = torch.zeros(data.x.shape[0], dtype=torch.long, device = device)
+        x, pos, batch = data.x, data.pos, torch.zeros(data.x.shape[0], dtype=torch.long, device = device)
         #print(x.shape)
         x0 = torch.cat([x, pos], dim=-1)
         #print(x0.shape)
