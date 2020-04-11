@@ -85,7 +85,8 @@ class Net(torch.nn.Module):
                        Dropout(0.5), Lin(128, 1))
 
     def forward(self, data):
-        x, pos, batch = data.x, data.pos, torch.zeros(1, dtype=torch.long)
+        x, pos, batch = data.x, data.pos, torch.zeros(data.x.shape[0], dtype=torch.long)
+
         x0 = torch.cat([x, pos], dim=-1)
         print(x0.shape)
         x1 = self.conv1(x0, batch)
