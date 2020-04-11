@@ -87,11 +87,17 @@ class Net(torch.nn.Module):
     def forward(self, data):
         x, pos, batch = data.x, data.pos, torch.zeros(data.x.shape[0], dtype=torch.long)
 
+        print(x.shape)
         x0 = torch.cat([x, pos], dim=-1)
+        print(x0.shape)
         x1 = self.conv1(x0, batch)
+        print(x1.shape)
         x2 = self.conv2(x1, batch)
+        print(x2.shape)
         x3 = self.conv3(x2, batch)
+        print(x3.shape)
         out = self.lin1(torch.cat([x1, x2, x3], dim=1))
+        print(out.shape)
         out = self.mlp(out)
         print(out.shape)
         return out.view(-1)
