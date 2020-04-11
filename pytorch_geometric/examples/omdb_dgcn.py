@@ -99,7 +99,7 @@ class Net(torch.nn.Module):
         #print(out.shape)
         out = self.mlp(out)
         #print(out.shape)
-        out = out.view(-1).max()
+        out = out.view(-1).mean()
         #print(out)
         return out.view(-1)
 
