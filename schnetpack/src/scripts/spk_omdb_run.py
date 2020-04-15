@@ -71,7 +71,7 @@ def train_model(args,model,train_loader,val_loader):
 		trn.CSVHook(log_path=args.model_path, metrics=metrics),
 		trn.ReduceLROnPlateauHook(
         optimizer,
-        patience=25, factor=0.6, min_lr=1e-6,window_length=1,
+        patience=5, factor=0.6, min_lr=1e-6,window_length=1,
         stop_after_min=True
         )
 	]
