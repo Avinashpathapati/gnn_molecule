@@ -35,8 +35,8 @@ def simple_loss_fn(args):
 def model(args,omdData,atomrefs, means, stddevs):
 
 	schnet = spk.representation.SchNet(
-		n_atom_basis=args.features, n_filters=args.features, n_gaussians=50, n_interactions=6,
-		cutoff=5.0, cutoff_network=spk.nn.cutoff.CosineCutoff
+		n_atom_basis=args.features, n_filters=args.features, n_gaussians=75, n_interactions=6,
+		cutoff=10.0, cutoff_network=spk.nn.cutoff.CosineCutoff
 	)
 	output_module = get_output_module(
             args,
@@ -71,7 +71,7 @@ def train_model(args,model,train_loader,val_loader):
 		trn.CSVHook(log_path=args.model_path, metrics=metrics),
 		trn.ReduceLROnPlateauHook(
         optimizer,
-        patience=5, factor=0.6, min_lr=1e-6,window_length=1,
+        patience=5, factor=0.8, min_lr=1e-6,window_length=1,
         stop_after_min=True
         )
 	]
@@ -117,7 +117,7 @@ def main(args):
 
 	#building model and dataset
 	device = torch.device("cuda" if args.cuda else "cpu")
-	environment_provider = spk.environment.SimpleEnvironmentProvider()
+	environment_provider = spk.environment.AseEnvironmentProvider()
 	omdb = './omdb'
 	if args.mode == "train":
 		if not os.path.exists('omdb'):
