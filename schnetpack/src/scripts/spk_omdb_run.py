@@ -119,6 +119,7 @@ def plot_results(args):
 def main(args):
 
 	#building model and dataset
+	spk.utils.spk_utils.set_random_seed(None)
 	device = torch.device("cuda" if args.cuda else "cpu")
 	environment_provider = spk.environment.AseEnvironmentProvider(cutoff=10.0)
 	omdb = './omdb'
