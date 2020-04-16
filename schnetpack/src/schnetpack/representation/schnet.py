@@ -207,9 +207,6 @@ class SchNet(nn.Module):
         """
         # get tensors from input dictionary
         atomic_numbers = inputs[Properties.Z]
-        print('----------------')
-        print(self.training)
-        print('------------------')
         # #implementing dropout s3754715
         # if self.training:
         #     binomial = torch.distributions.binomial.Binomial(probs=0.8)

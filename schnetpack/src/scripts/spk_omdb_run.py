@@ -13,6 +13,7 @@ from ase.units import kcal, mol
 from ase.io import read
 import schnetpack.train as trn
 import spk_ombd_parser as arg_parser
+import torch.nn as nn
 from schnetpack import AtomsData
 from schnetpack.utils.script_utils.settings import get_environment_provider
 from torch.utils.data.sampler import RandomSampler
@@ -35,8 +36,8 @@ def simple_loss_fn(args):
 def model(args,omdData,atomrefs, means, stddevs):
 
 	schnet = spk.representation.SchNet(
-		n_atom_basis=args.features, n_filters=args.features, n_gaussians=75, n_interactions=6,
-		cutoff=10.0, cutoff_network=spk.nn.cutoff.CosineCutoff
+		n_atom_basis=args.features, n_filters=args.features, n_gaussians=50, n_interactions=6,
+		cutoff=5.0, cutoff_network=spk.nn.cutoff.CosineCutoff
 	)
 	output_module = get_output_module(
             args,
@@ -49,6 +50,8 @@ def model(args,omdData,atomrefs, means, stddevs):
 	# output_Bgap = spk.atomistic.Atomwise(n_in=args.features, atomref=atomrefs[OrganicMaterialsDatabase.BandGap], property=OrganicMaterialsDatabase.BandGap,
 	# 						   mean=means[OrganicMaterialsDatabase.BandGap], stddev=stddevs[OrganicMaterialsDatabase.BandGap])
 	model = spk.AtomisticModel(representation=schnet, output_modules=output_module)
+	if args.parallel:
+		model = nn.DataParallel(model)
 	return model
 
 def train_model(args,model,train_loader,val_loader):
@@ -71,7 +74,7 @@ def train_model(args,model,train_loader,val_loader):
 		trn.CSVHook(log_path=args.model_path, metrics=metrics),
 		trn.ReduceLROnPlateauHook(
         optimizer,
-        patience=5, factor=0.8, min_lr=1e-6,window_length=1,
+        patience=25, factor=0.6, min_lr=1e-6,window_length=1,
         stop_after_min=True
         )
 	]
@@ -131,11 +134,13 @@ def main(args):
 			num_val=1000,
 			split_file=split_path
 		)
-		train_loader = spk.AtomsLoader(train, batch_size=16, sampler=RandomSampler(train), num_workers=4 
+		train_loader = spk.AtomsLoader(train, batch_size=16, sampler=RandomSampler(train), #num_workers=4 
 			#pin_memory=True
 			)
-		val_loader = spk.AtomsLoader(val, batch_size=16, num_workers=2)
-		test_loader = spk.AtomsLoader(test, batch_size=16, num_workers=2)
+		val_loader = spk.AtomsLoader(val, batch_size=16, #num_workers=2
+			)
+		test_loader = spk.AtomsLoader(test, batch_size=16, #num_workers=2
+			)
 		atomref = omdData.get_atomref(args.property)
 		mean, stddev = get_statistics(
 	        args=args,
