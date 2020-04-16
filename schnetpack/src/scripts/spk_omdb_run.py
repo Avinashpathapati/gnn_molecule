@@ -134,8 +134,8 @@ def main(args):
 		train_loader = spk.AtomsLoader(train, batch_size=32, sampler=RandomSampler(train), num_workers=4 
 			#pin_memory=True
 			)
-		val_loader = spk.AtomsLoader(val, batch_size=32, num_workers=2)
-		test_loader = spk.AtomsLoader(test, batch_size=32, num_workers=2)
+		val_loader = spk.AtomsLoader(val, batch_size=24, num_workers=2)
+		test_loader = spk.AtomsLoader(test, batch_size=24, num_workers=2)
 		atomref = omdData.get_atomref(args.property)
 		mean, stddev = get_statistics(
 	        args=args,
