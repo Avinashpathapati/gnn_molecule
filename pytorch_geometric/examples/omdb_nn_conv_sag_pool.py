@@ -108,7 +108,7 @@ class Net(torch.nn.Module):
         #print(out.shape)
         # out = F.relu(self.lin1(out))
         # #print(out.shape)
-        # out = self.lin2(out)
+        out = self.lin2(out)
         #print(out.shape)
         #print('-----------------')
 
