@@ -82,7 +82,7 @@ class Net(torch.nn.Module):
 
         # self.set2set = Set2Set(dim, processing_steps=1)
         self.pool1 = SAGPooling(dim, min_score=0.001, GNN=GCNConv)
-        gatt_nn = Sequential(Linear(dim, dim), ReLU(), Linear(dim, dim))
+        gatt_nn = Sequential(Linear(dim, dim), ReLU(), Linear(dim, 1))
         self.gatt = GlobalAttention(gatt_nn)
         self.lin1 = torch.nn.Linear(dim, dim)
         self.lin2 = torch.nn.Linear(dim, 1)
