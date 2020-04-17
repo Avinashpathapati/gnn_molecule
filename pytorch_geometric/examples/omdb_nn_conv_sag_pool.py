@@ -102,6 +102,7 @@ class Net(torch.nn.Module):
         #print(out.shape)
         out, edge_index, _, batch, perm, score = self.pool1(
             out, data.edge_index, None, data.batch)
+        print(out.shape)
         out = self.gatt(out, data.batch)
         #print(out.shape)
         # out = F.relu(self.lin1(out))
