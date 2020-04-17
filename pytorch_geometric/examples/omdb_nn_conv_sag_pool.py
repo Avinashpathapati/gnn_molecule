@@ -104,12 +104,14 @@ class Net(torch.nn.Module):
             out, data.edge_index, None, data.batch)
         print(out.shape)
         out = self.gatt(out, data.batch)
+        print(out.shape)
         #print(out.shape)
         # out = F.relu(self.lin1(out))
         # #print(out.shape)
         # out = self.lin2(out)
         #print(out.shape)
         #print('-----------------')
+
         return out.view(-1)
 
 
