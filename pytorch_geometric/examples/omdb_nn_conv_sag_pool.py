@@ -7,7 +7,7 @@ from torch.nn import Sequential, Linear, ReLU, GRU
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OMDBXYZ
-from torch_geometric.nn import NNConv, Set2Set, GCNConv, SAGPooling, global_max_pool
+from torch_geometric.nn import NNConv, Set2Set, GCNConv, SAGPooling, GlobalAttention
 from torch_geometric.data import DataLoader
 from torch_geometric.utils import remove_self_loops
 import logging
@@ -82,6 +82,8 @@ class Net(torch.nn.Module):
 
         # self.set2set = Set2Set(dim, processing_steps=1)
         self.pool1 = SAGPooling(dim, min_score=0.001, GNN=GCNConv)
+        gatt_nn = Sequential(Linear(dim, dim), ReLU(), Linear(dim, dim))
+        self.gatt = GlobalAttention(gatt_nn)
         self.lin1 = torch.nn.Linear(dim, dim)
         self.lin2 = torch.nn.Linear(dim, 1)
 
@@ -100,11 +102,11 @@ class Net(torch.nn.Module):
         #print(out.shape)
         out, edge_index, _, batch, perm, score = self.pool1(
             out, data.edge_index, None, data.batch)
-        out = global_max_pool(out, data.batch)
+        out = self.gatt(out, data.batch)
         #print(out.shape)
-        out = F.relu(self.lin1(out))
-        #print(out.shape)
-        out = self.lin2(out)
+        # out = F.relu(self.lin1(out))
+        # #print(out.shape)
+        # out = self.lin2(out)
         #print(out.shape)
         #print('-----------------')
         return out.view(-1)
