@@ -151,12 +151,12 @@ class OMDBXYZ(InMemoryDataset):
 			if self.pre_transform is not None:
 				data = self.pre_transform(data)
 
-			print('----------------')
-			print(data.x.shape)
-			print(data.edge_index.shape)
-			print(data.x)
-			print(data.edge_index)
-			print('------------------')
+			# print('----------------')
+			# print(data.x.shape)
+			# print(data.edge_index.shape)
+			# print(data.x)
+			# print(data.edge_index)
+			# print('------------------')
 
 			data_list.append(data)
 		
