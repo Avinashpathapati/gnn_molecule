@@ -44,7 +44,8 @@ class OMDBXYZ(InMemoryDataset):
 			   'OMDB-GAP1_v1.1.tar.gz')
 	#need to be changed later
 	processed_url = 'https://omdb.mathub.io/dataset/download/gap1_v1.1'
-	bonds = {"SINGLE": 0, "DOUBLE": 1, "TRIPLE": 2, "AROMATIC": 3}
+	#bonds = {"SINGLE": 0, "DOUBLE": 1, "TRIPLE": 2, "AROMATIC": 3}
+	bonds = {"SINGLE": 0}
 
 	def __init__(self, root, transform=None, pre_transform=None,
 				 pre_filter=None):
@@ -98,26 +99,41 @@ class OMDBXYZ(InMemoryDataset):
 			atomic_number = []
 			for atom_num in mol['_atomic_numbers']:
 				atomic_number.append(atom_num.item())
-			
-			N = len(atomic_number)	
-			x = torch.tensor([
-				atomic_number
-			], dtype=torch.float).t().contiguous()
 
 			row, col, bond_idx = [], [], []
 			print('before fetching the atom properties ',str(i))
 			at_obj = omdData.get_atoms(idx=i)
 			print('after fetching the atom properties')
 
-			bond_anal = Analysis(at_obj)
-			for bond_list in bond_anal.unique_bonds:
-				for start, atom_bond_list in enumerate(bond_list):
-					for end in atom_bond_list:
-						row += [start, end]
-						col += [end, start]
-						bond_idx += 2 * [self.bonds["SINGLE"]]
+			#added atomic masses
+			atomic_masses = []
+			for atomic_mass in at_obj.get_masses():
+				atomic_masses.append(atomic_mass)
+			
+			N = len(atomic_number)
 
-			print('after constructing the bonds')
+			x = torch.tensor([
+				atomic_number, atomic_masses
+			], dtype=torch.float).t().contiguous()
+
+			# bond_anal = Analysis(at_obj)
+			# for bond_list in bond_anal.unique_bonds:
+			# 	for start, atom_bond_list in enumerate(bond_list):
+			# 		for end in atom_bond_list:
+			# 			row += [start, end]
+			# 			col += [end, start]
+			# 			bond_idx += 2 * [self.bonds["SINGLE"]]
+
+			#print('after constructing the bonds')
+			cutoff_radius = 5
+			all_distances = at_obj.get_all_distances()
+			cutoff_distance_nodes = np.array(np.nonzero(all_distances <= cutoff_radius))
+			for ydim in range(0,cutoff_distance_nodes.shape[1]):
+				row += [cutoff_distance_nodes[0][ydim], cutoff_distance_nodes[1][ydim]]
+				col += [cutoff_distance_nodes[1][ydim], cutoff_distance_nodes[0][ydim]]
+				bond_idx += 2 * [self.bonds["SINGLE"]]
+
+
 			edge_index = torch.tensor([row, col], dtype=torch.long)
 			edge_attr = F.one_hot(torch.tensor(bond_idx),
 								   num_classes=len(self.bonds)).to(torch.float)
