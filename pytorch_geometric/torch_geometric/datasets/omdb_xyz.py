@@ -113,7 +113,7 @@ class OMDBXYZ(InMemoryDataset):
 			N = len(atomic_number)
 
 			x = torch.tensor([
-				atomic_number, atomic_masses
+				atomic_number, #atomic_masses
 			], dtype=torch.float).t().contiguous()
 
 			# bond_anal = Analysis(at_obj)
@@ -125,7 +125,7 @@ class OMDBXYZ(InMemoryDataset):
 			# 			bond_idx += 2 * [self.bonds["SINGLE"]]
 
 			#print('after constructing the bonds')
-			cutoff_radius = 5
+			cutoff_radius = 5.0
 			all_distances = at_obj.get_all_distances()
 			cutoff_distance_nodes = np.array(np.nonzero(all_distances <= cutoff_radius))
 			for ydim in range(0,cutoff_distance_nodes.shape[1]):
