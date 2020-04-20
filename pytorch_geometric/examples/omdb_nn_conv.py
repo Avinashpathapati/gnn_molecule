@@ -178,6 +178,6 @@ for epoch in range(1, 501):
     
 
     logging.warning('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '
-          'Test MAE: {:.7f}','Best Test MAE: {:.7f}'.format(epoch, lr, loss, val_error, test_error, best_test_error))
+          'Test MAE: {:.7f},Best Test MAE: {:.7f}'.format(epoch, lr, loss, val_error, test_error, best_test_error))
 
 plot_results(range(1, 501), train_loss, val_loss, test_loss)
