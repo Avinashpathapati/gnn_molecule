@@ -91,7 +91,7 @@ class Net(torch.nn.Module):
         #print(out.shape)
         h = out.unsqueeze(0)
 
-        for i in range(5):
+        for i in range(11):
             m = F.relu(self.conv(out, data.edge_index, data.edge_attr))
             out, h = self.gru(m.unsqueeze(0), h)
             out = out.squeeze(0)
@@ -157,6 +157,7 @@ def plot_results(epochs, train_loss, val_loss, test_loss):
 
 
 best_val_error = None
+best_test_error = None
 train_loss = []
 val_loss = []
 test_loss = []
@@ -170,7 +171,13 @@ for epoch in range(1, 501):
     test_error = test(test_loader)
     test_loss.append(test_error)
 
+    if best_val_error is None or val_error <= best_val_error:
+        best_test_error = test_error
+        best_val_error = val_error
+
+    
+
     logging.warning('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '
-          'Test MAE: {:.7f}'.format(epoch, lr, loss, val_error, test_error))
+          'Test MAE: {:.7f}','Best Test MAE: {:.7f}'.format(epoch, lr, loss, val_error, test_error, best_test_error))
 
 plot_results(range(1, 501), train_loss, val_loss, test_loss)
