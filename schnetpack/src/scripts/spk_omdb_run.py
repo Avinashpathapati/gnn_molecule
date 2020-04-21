@@ -119,11 +119,11 @@ def plot_results(args):
 def main(args):
 
 	#building model and dataset
-	spk.utils.spk_utils.set_random_seed(None)
 	device = torch.device("cuda" if args.cuda else "cpu")
-	environment_provider = spk.environment.AseEnvironmentProvider(cutoff=5.0)
 	omdb = './omdb'
 	if args.mode == "train":
+		spk.utils.spk_utils.set_random_seed(None)
+		environment_provider = spk.environment.AseEnvironmentProvider(cutoff=5.0)
 		if not os.path.exists('omdb'):
 			os.makedirs(omdb)
 
@@ -190,12 +190,23 @@ def main(args):
 		print('predictionsss')
 		sch_model = torch.load(os.path.join(omdb, 'best_model'))
 		#reading test data
-		test_dataset = AtomsData('./cod_predict.db')
-		test_loader = spk.AtomsLoader(test_dataset, batch_size=32)
+		# test_dataset = AtomsData('./cod_predict.db')
+		# test_loader = spk.AtomsLoader(test_dataset, batch_size=32)
+
 		#reading stored cod list
-		cod_list = np.load('./cod_id_list_old.npy')
+		#cod_list = np.load('./cod_id_list_old.npy')
+		omdData = OrganicMaterialsDatabase(args.datapath, download=False, load_only=[args.property], environment_provider=environment_provider)
+		split_path = os.path.join(args.model_path, "split.npz")
+		train, val, test = spk.train_test_split(
+			data=omdData,
+			num_train=9000,
+			num_val=1000,
+			split_file=split_path
+		)
+		test_loader = spk.AtomsLoader(test, batch_size=32, num_workers=2)
 		mean_abs_err = 0
 		prediction_list = []
+		actual_value_list = []
 		print('Started generating predictions')
 		for count, batch in enumerate(test_loader):
 		    
@@ -204,12 +215,15 @@ def main(args):
 		    # apply model
 		    pred = sch_model(batch)
 		    prediction_list.extend(pred['band_gap'].detach().numpy().flatten().tolist())
-
+		    actual_value_list.extend(batch['band_gap'].detach().numpy().flatten().tolist())
 		    # log progress
 		    percent = '{:3.2f}'.format(count/len(test_loader)*100)
 		    print('Progress:', percent+'%'+' '*(5-len(percent)), end="\r")
 
-		results_df = pd.DataFrame({'cod':cod_list, 'prediction':prediction_list})
+		
+		cod_list = np.genfromtxt(os.path.join(args.datapath, 'CODids.csv'))
+		cod_list = cod_list[10000:]
+		results_df = pd.DataFrame({'cod':cod_list, 'prediction':prediction_list, 'actual': actual_value_list})
 		results_df.to_csv('./predictions.csv')
 
 
