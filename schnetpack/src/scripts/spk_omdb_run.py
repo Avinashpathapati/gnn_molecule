@@ -120,10 +120,10 @@ def main(args):
 
 	#building model and dataset
 	device = torch.device("cuda" if args.cuda else "cpu")
+	environment_provider = spk.environment.AseEnvironmentProvider(cutoff=5.0)
 	omdb = './omdb'
 	if args.mode == "train":
 		spk.utils.spk_utils.set_random_seed(None)
-		environment_provider = spk.environment.AseEnvironmentProvider(cutoff=5.0)
 		if not os.path.exists('omdb'):
 			os.makedirs(omdb)
 
