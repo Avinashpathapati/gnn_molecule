@@ -116,22 +116,22 @@ class OMDBXYZ(InMemoryDataset):
 				atomic_number, #atomic_masses
 			], dtype=torch.float).t().contiguous()
 
-			# bond_anal = Analysis(at_obj)
-			# for bond_list in bond_anal.unique_bonds:
-			# 	for start, atom_bond_list in enumerate(bond_list):
-			# 		for end in atom_bond_list:
-			# 			row += [start, end]
-			# 			col += [end, start]
-			# 			bond_idx += 2 * [self.bonds["SINGLE"]]
+			bond_anal = Analysis(at_obj)
+			for bond_list in bond_anal.unique_bonds:
+				for start, atom_bond_list in enumerate(bond_list):
+					for end in atom_bond_list:
+						row += [start, end]
+						col += [end, start]
+						bond_idx += 2 * [self.bonds["SINGLE"]]
 
-			#print('after constructing the bonds')
-			cutoff_radius = 5.0
-			all_distances = at_obj.get_all_distances()
-			cutoff_distance_nodes = np.array(np.nonzero(all_distances <= cutoff_radius))
-			for ydim in range(0,cutoff_distance_nodes.shape[1]):
-				row += [cutoff_distance_nodes[0][ydim], cutoff_distance_nodes[1][ydim]]
-				col += [cutoff_distance_nodes[1][ydim], cutoff_distance_nodes[0][ydim]]
-				bond_idx += 2 * [self.bonds["SINGLE"]]
+			print('after constructing the bonds')
+			# cutoff_radius = 5.0
+			# all_distances = at_obj.get_all_distances()
+			# cutoff_distance_nodes = np.array(np.nonzero(all_distances <= cutoff_radius))
+			# for ydim in range(0,cutoff_distance_nodes.shape[1]):
+			# 	row += [cutoff_distance_nodes[0][ydim], cutoff_distance_nodes[1][ydim]]
+			# 	col += [cutoff_distance_nodes[1][ydim], cutoff_distance_nodes[0][ydim]]
+			# 	bond_idx += 2 * [self.bonds["SINGLE"]]
 
 
 			edge_index = torch.tensor([row, col], dtype=torch.long)
