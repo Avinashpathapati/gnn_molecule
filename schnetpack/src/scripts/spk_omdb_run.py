@@ -213,7 +213,9 @@ def main(args):
 		for count, batch in enumerate(test_loader):
 		    
 		    # move batch to GPU, if necessary
+		    print('before batch')
 		    batch = {k: v.to(device) for k, v in batch.items()}
+		    print('after batch')
 		    # apply model
 		    pred = sch_model(batch)
 		    prediction_list.extend(pred['band_gap'].detach().numpy().flatten().tolist())
