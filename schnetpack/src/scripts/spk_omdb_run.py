@@ -203,9 +203,9 @@ def main(args):
 			num_val=1000,
 			split_file=split_path
 		)
+		print(len(test))
 		test_loader = spk.AtomsLoader(test, batch_size=32, #num_workers=2
 			)
-		print(len(test_loader))
 		mean_abs_err = 0
 		prediction_list = []
 		actual_value_list = []
@@ -225,8 +225,15 @@ def main(args):
 		    print('Progress:', percent+'%'+' '*(5-len(percent)), end="\r")
 
 		
+		
 		cod_arr = np.genfromtxt(os.path.join('/home/s3754715/gnn_molecule/schnetpack/dataset/OMDB-GAP1_v1.1', 'CODids.csv'))
 		cod_list = cod_arr[10000:].tolist()
+		print(len(cod_list))
+		print(len(prediction_list))
+		print(len(actual_value_list))
+		print('--------------------')
+		print(prediction_list)
+		print(actual_value_list)
 		results_df = pd.DataFrame({'cod':cod_list, 'prediction':prediction_list, 'actual': actual_value_list})
 		results_df.to_csv('./predictions.csv')
 
