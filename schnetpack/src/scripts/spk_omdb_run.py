@@ -218,8 +218,8 @@ def main(args):
 		    print('after batch')
 		    # apply model
 		    pred = sch_model(batch)
-		    prediction_list.extend(pred['band_gap'].detach().numpy().flatten().tolist())
-		    actual_value_list.extend(batch['band_gap'].detach().numpy().flatten().tolist())
+		    prediction_list.extend(pred['band_gap'].detach().cpu().numpy().flatten().tolist())
+		    actual_value_list.extend(batch['band_gap'].detach().cpu().numpy().flatten().tolist())
 		    # log progress
 		    percent = '{:3.2f}'.format(count/len(test_loader)*100)
 		    print('Progress:', percent+'%'+' '*(5-len(percent)), end="\r")
