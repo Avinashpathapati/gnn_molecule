@@ -15,6 +15,9 @@ import logging
 target = 0
 dim = 32
 
+model_path = os.path.join(os.getcwd(),'model')
+if not os.path.exists(model_path):
+    os.makedirs('model')
 
 class MyTransform(object):
     def __call__(self, data):
@@ -77,6 +80,9 @@ class Net(torch.nn.Module):
 
         nn = Sequential(Linear(2, 64), ReLU(), Linear(64, dim * dim))
         #nn = Sequential(Linear(5, dim * dim))
+        self.conv0 = NNConv(dim, 2*dim, nn, aggr='mean')
+        self.gru0 = GRU(2*dim, dim)
+
         self.conv = NNConv(dim, dim, nn, aggr='mean')
         self.gru = GRU(dim, dim)
 
@@ -91,9 +97,13 @@ class Net(torch.nn.Module):
         #print(out.shape)
         h = out.unsqueeze(0)
 
-        for i in range(11):
-            m = F.relu(self.conv(out, data.edge_index, data.edge_attr))
-            out, h = self.gru(m.unsqueeze(0), h)
+        for i in range(8):
+            if i==0:
+                m = F.relu(self.conv0(out, data.edge_index, data.edge_attr))
+                out, h = self.gru0(m.unsqueeze(0), h)
+            else:
+                m = F.relu(self.conv(out, data.edge_index, data.edge_attr))
+                out, h = self.gru(m.unsqueeze(0), h)
             out = out.squeeze(0)
 
         #print(out.shape)
@@ -174,6 +184,7 @@ for epoch in range(1, 501):
     if best_val_error is None or val_error <= best_val_error:
         best_test_error = test_error
         best_val_error = val_error
+        torch.save(model, os.path.join(self.model_path, "best_model"))
 
     
 
