@@ -204,6 +204,8 @@ def main(args):
 			split_file=split_path
 		)
 		print(len(test))
+		print(len(train))
+		print(len(val))
 		test_loader = spk.AtomsLoader(test, batch_size=32, #num_workers=2
 			)
 		mean_abs_err = 0
