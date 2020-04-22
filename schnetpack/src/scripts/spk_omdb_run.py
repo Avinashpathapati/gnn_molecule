@@ -188,7 +188,7 @@ def main(args):
 
 	elif args.mode == "pred":
 		print('predictionsss')
-		sch_model = torch.load(os.path.join(args.model_path, 'best_model'), map_location=torch.device(device))
+		sch_model = torch.load(os.path.join(args.model_path, 'best_model'))
 		#reading test data
 		# test_dataset = AtomsData('./cod_predict.db')
 		# test_loader = spk.AtomsLoader(test_dataset, batch_size=32)
