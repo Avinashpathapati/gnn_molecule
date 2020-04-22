@@ -203,7 +203,7 @@ def main(args):
 			num_val=1000,
 			split_file=split_path
 		)
-		test_loader = spk.AtomsLoader(test, batch_size=64, #num_workers=2
+		test_loader = spk.AtomsLoader(test, batch_size=32, #num_workers=2
 			)
 		print(len(test_loader))
 		mean_abs_err = 0
