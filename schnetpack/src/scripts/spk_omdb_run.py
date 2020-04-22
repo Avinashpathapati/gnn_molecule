@@ -225,8 +225,8 @@ def main(args):
 		    print('Progress:', percent+'%'+' '*(5-len(percent)), end="\r")
 
 		
-		cod_list = np.genfromtxt(os.path.join(args.datapath, 'CODids.csv'))
-		cod_list = cod_list[10000:]
+		cod_arr = np.genfromtxt(os.path.join('/home/s3754715/gnn_molecule/schnetpack/dataset/OMDB-GAP1_v1.1', 'CODids.csv'))
+		cod_list = cod_arr[10000:].tolist()
 		results_df = pd.DataFrame({'cod':cod_list, 'prediction':prediction_list, 'actual': actual_value_list})
 		results_df.to_csv('./predictions.csv')
 
