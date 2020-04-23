@@ -185,7 +185,7 @@ for epoch in range(1, 501):
     if best_val_error is None or val_error <= best_val_error:
         best_test_error = test_error
         best_val_error = val_error
-        torch.save(model, os.path.join(self.model_path, "best_model"))
+        torch.save(model, os.path.join(model_path, "best_model"))
 
     
 
