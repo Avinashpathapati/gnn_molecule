@@ -135,6 +135,11 @@ def main(args):
 			num_val=1000,
 			split_file=split_path
 		)
+		print('-----------')
+		print(len(train))
+		print(len(val))
+		print(len(test))
+		print('-------------')
 		train_loader = spk.AtomsLoader(train, batch_size=16, sampler=RandomSampler(train), num_workers=4 
 			#pin_memory=True
 			)
