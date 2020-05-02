@@ -127,7 +127,7 @@ def main(args):
 		if not os.path.exists('omdb'):
 			os.makedirs(omdb)
 
-		omdData = OrganicMaterialsDatabase(args.datapath, download=True, load_only=[args.property], environment_provider=environment_provider)
+		omdData = OrganicMaterialsDatabase(args.datapath, download=False, load_only=[args.property], environment_provider=environment_provider)
 		split_path = os.path.join(args.model_path, "split.npz")
 		train, val, test = spk.train_test_split(
 			data=omdData,
