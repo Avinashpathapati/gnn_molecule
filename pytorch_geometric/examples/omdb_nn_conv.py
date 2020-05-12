@@ -56,7 +56,9 @@ transform = T.Compose([MyTransform(), Complete(), T.Distance(norm=False),
     T.RandomTranslate(0.01), T.RandomRotate(15, axis=0), T.RandomRotate(15, axis=1), T.RandomRotate(15, axis=2)])
 dataset = OMDBXYZ(path,transform=transform).shuffle()
 
+print(len(dataset))
 dataset = dataset[dataset.data.y > 0]
+print(len(dataset))
 
 # Normalize targets to mean = 0 and std = 1.
 mean = dataset.data.y.mean(dim=0, keepdim=True)
