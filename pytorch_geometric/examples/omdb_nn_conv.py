@@ -56,6 +56,8 @@ transform = T.Compose([MyTransform(), Complete(), T.Distance(norm=False),
     T.RandomTranslate(0.01), T.RandomRotate(15, axis=0), T.RandomRotate(15, axis=1), T.RandomRotate(15, axis=2)])
 dataset = OMDBXYZ(path,transform=transform).shuffle()
 
+dataset = dataset[dataset.data.y > 0]
+
 # Normalize targets to mean = 0 and std = 1.
 mean = dataset.data.y.mean(dim=0, keepdim=True)
 std = dataset.data.y.std(dim=0, keepdim=True)
@@ -78,11 +80,11 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
         self.lin0 = torch.nn.Linear(dataset.num_features, dim)
 
-        nn0 = Sequential(Linear(2, 64), ReLU(), Linear(64, 4*dim*dim))
+        nn0 = Sequential(Linear(2, 64), ReLU(), Linear(64, 2*dim*dim))
         nn = Sequential(Linear(2, 64), ReLU(), Linear(64, dim * dim))
         #nn = Sequential(Linear(5, dim * dim))
-        self.conv0 = NNConv(dim, 4*dim, nn0, aggr='mean')
-        self.gru0 = GRU(4*dim, dim)
+        self.conv0 = NNConv(dim, 2*dim, nn0, aggr='mean')
+        self.gru0 = GRU(2*dim, dim)
 
         self.conv = NNConv(dim, dim, nn, aggr='mean')
         self.gru = GRU(dim, dim)
