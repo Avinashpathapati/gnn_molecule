@@ -32,9 +32,12 @@ class Node2Vec(torch.nn.Module):
         num_negative_samples (int, optional): The number of negative samples to
             use for each node. If set to :obj:`None`, this parameter gets set
             to :obj:`context_size - 1`. (default: :obj:`None`)
+        sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
+            weight matrix will be sparse. (default: :obj:`False`)
     """
     def __init__(self, num_nodes, embedding_dim, walk_length, context_size,
-                 walks_per_node=1, p=1, q=1, num_negative_samples=None):
+                 walks_per_node=1, p=1, q=1, num_negative_samples=None,
+                 sparse=False):
         super(Node2Vec, self).__init__()
 
         if random_walk is None:
@@ -50,16 +53,20 @@ class Node2Vec(torch.nn.Module):
         self.q = q
         self.num_negative_samples = num_negative_samples
 
-        self.embedding = torch.nn.Embedding(num_nodes, embedding_dim)
+        self.embedding = torch.nn.Embedding(num_nodes, embedding_dim,
+                                            sparse=sparse)
 
         self.reset_parameters()
 
     def reset_parameters(self):
         self.embedding.reset_parameters()
 
-    def forward(self, subset):
+    def forward(self, subset=None):
         """Returns the embeddings for the nodes in :obj:`subset`."""
-        return self.embedding(subset)
+        if subset is None:
+            return self.embedding.weight
+        else:
+            return self.embedding(subset)
 
     def __random_walk__(self, edge_index, subset=None):
         if subset is None:
@@ -67,7 +74,8 @@ class Node2Vec(torch.nn.Module):
         subset = subset.repeat(self.walks_per_node)
 
         rw = random_walk(edge_index[0], edge_index[1], subset,
-                         self.walk_length, self.p, self.q, self.num_nodes)
+                         self.walk_length, self.p, self.q, False,
+                         self.num_nodes)
 
         walks = []
         num_walks_per_rw = 1 + self.walk_length + 1 - self.context_size
