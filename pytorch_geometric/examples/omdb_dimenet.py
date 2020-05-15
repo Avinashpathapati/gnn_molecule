@@ -6,6 +6,7 @@ from tqdm import tqdm
 from torch_geometric.datasets import OMDB
 from torch_geometric.data import DataLoader
 from torch_geometric.nn import DimeNet
+import logging
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--target', type=int, default=0)
@@ -91,5 +92,8 @@ for epoch in range(1, 501):
     if val_mae < best_val_mae:
         best_val_mae = val_mae
         test_mae = test(test_loader)
-    print(f'Epoch: {epoch:02d}, Train: {train_mae:.4f}, Val: {val_mae:.4f}, '
-          f'Test: {test_mae:.4f}')
+    
+    # print(f'Epoch: {epoch:02d}, Train: {train_mae:.4f}, Val: {val_mae:.4f}, '
+    #       f'Test: {test_mae:.4f}')
+    logging.warning('Epoch: {:03d}, Loss: {:.7f}, Validation MAE: {:.7f}, '
+          'Test MAE: {:.7f}'.format(epoch, train_mae, val_mae, test_mae))
