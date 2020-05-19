@@ -39,9 +39,9 @@ train_dataset = dataset[:9000]
 val_dataset = dataset[9000:10000]
 test_dataset = dataset[10000:]
 
-train_loader = DataLoader(train_dataset, 32, shuffle=True, num_workers=6)
-val_loader = DataLoader(val_dataset, 32, num_workers=6)
-test_loader = DataLoader(test_dataset, 32, num_workers=6)
+train_loader = DataLoader(train_dataset, 16, shuffle=True, num_workers=2)
+val_loader = DataLoader(val_dataset, 16, num_workers=2)
+test_loader = DataLoader(test_dataset, 16, num_workers=2)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = DimeNet(in_channels=dataset.num_node_features, hidden_channels=128,
