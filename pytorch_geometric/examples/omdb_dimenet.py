@@ -44,9 +44,10 @@ val_loader = DataLoader(val_dataset, 16, num_workers=2)
 test_loader = DataLoader(test_dataset, 16, num_workers=2)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 model = DimeNet(in_channels=dataset.num_node_features, hidden_channels=64,
                 out_channels=1, num_blocks=3, num_bilinear=4, num_spherical=7,
-                num_radial=6, cutoff=args.cutoff).to(device)
+                num_radial=3, cutoff=args.cutoff).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001, amsgrad=True)
 
 
