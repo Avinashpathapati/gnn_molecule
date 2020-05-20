@@ -21,9 +21,9 @@ class MyTransform(object):  # k-NN graph, and feature and target selection.
         mask = dist <= args.cutoff
         data.edge_index = mask.nonzero().t()
         data.edge_attr = None  # No need to maintain bond types.
-        print('---------')
-        print(data.x.shape)
-        print(data.y.shape)
+        # print('---------')
+        # print(data.x.shape)
+        # print(data.y.shape)
         data.x = data.x[:, :0]  # Just make use of atom types as features.
         # data.y = data.y[:, 0]
         return data
@@ -49,6 +49,7 @@ test_loader = DataLoader(test_dataset, 16, num_workers=2)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print('-----------')
 print(dataset.num_node_features)
+print('--------------')
 
 model = DimeNet(in_channels=dataset.num_node_features, hidden_channels=64,
                 out_channels=1, num_blocks=3, num_bilinear=4, num_spherical=7,
