@@ -54,7 +54,7 @@ def train(loader):
     model.train()
 
     total_loss = 0
-    pbar = tqdm(total=len(loader))
+    # pbar = tqdm(total=len(loader))
     for data in loader:
         optimizer.zero_grad()
         data = data.to(device)
@@ -64,10 +64,10 @@ def train(loader):
         optimizer.step()
 
         total_loss += loss.item() * data.num_graphs
-        pbar.set_description(f'Loss: {loss:.4f}')
-        pbar.update()
+        # pbar.set_description(f'Loss: {loss:.4f}')
+        # pbar.update()
 
-    pbar.close()
+    # pbar.close()
 
     return total_loss / len(loader.dataset)
 
