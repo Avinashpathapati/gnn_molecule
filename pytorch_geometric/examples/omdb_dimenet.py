@@ -24,7 +24,7 @@ class MyTransform(object):  # k-NN graph, and feature and target selection.
         # print('---------')
         # print(data.x.shape)
         # print(data.y.shape)
-        data.x = data.x[:, :0]  # Just make use of atom types as features.
+        # data.x = data.x[:, :0]  # Just make use of atom types as features.
         # data.y = data.y[:, 0]
         return data
 
