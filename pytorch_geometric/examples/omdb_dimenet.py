@@ -38,6 +38,10 @@ std = dataset.data.y.std(dim=0, keepdim=True)
 dataset.data.y = (dataset.data.y - mean) / std
 mean, std = mean.item(), std.item()
 
+print('----------bbbbb')
+print(dataset.data.y.shape)
+print(dataset.data.x.shape)
+
 train_dataset = dataset[:9000]
 val_dataset = dataset[9000:10000]
 test_dataset = dataset[10000:]
