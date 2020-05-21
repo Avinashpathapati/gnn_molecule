@@ -60,6 +60,8 @@ def train(epoch):
     total_loss = 0
     # pbar = tqdm(total=len(loader))
     for data in train_loader:
+        print('----------')
+        print(data.shape)
         optimizer.zero_grad()
         data = data.to(device)
         out = model(data.x, data.pos, data.edge_index, data.batch)
@@ -73,7 +75,7 @@ def train(epoch):
 
     # pbar.close()
 
-    return total_loss / len(loader.dataset)
+    return total_loss / len(train_loader.dataset)
 
 
 @torch.no_grad()
