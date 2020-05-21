@@ -342,6 +342,10 @@ class DimeNet(torch.nn.Module):
         for interaction_block, output_block in zip(self.interaction_blocks,
                                                    self.output_blocks[1:]):
             x = interaction_block(x, rbf, sbf, idx_kj, idx_ji)
+            print('-------aaa')
+            print(x.shape)
+            print(rbf.shape)
+            print(i.shape)
             P += output_block(x, rbf, i)
 
         return P.sum(dim=0) if batch is None else scatter(P, batch, dim=0)
