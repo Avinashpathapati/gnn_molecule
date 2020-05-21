@@ -25,7 +25,7 @@ class MyTransform(object):  # k-NN graph, and feature and target selection.
         # print(data.x.shape)
         # print(data.y.shape)
         # data.x = data.x[:, :0]  # Just make use of atom types as features.
-        # data.y = data.y[:, 0]
+        data.y = data.y.unsqueeze(1)
         return data
 
 
@@ -33,10 +33,10 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'OMDB')
 dataset = OMDB(path, transform=MyTransform()).shuffle()
 
 # Normalize targets to mean = 0 and std = 1.
-mean = dataset.data.y.mean(dim=0, keepdim=True)
-std = dataset.data.y.std(dim=0, keepdim=True)
-dataset.data.y = (dataset.data.y - mean) / std
-mean, std = mean.item(), std.item()
+# mean = dataset.data.y.mean(dim=0, keepdim=True)
+# std = dataset.data.y.std(dim=0, keepdim=True)
+# dataset.data.y = (dataset.data.y - mean) / std
+# mean, std = mean.item(), std.item()
 
 print('----------bbbbb')
 print(dataset.data.y.shape)
