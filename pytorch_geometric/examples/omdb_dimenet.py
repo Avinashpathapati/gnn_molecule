@@ -88,7 +88,8 @@ def test(loader):
     for data in loader:
         data = data.to(device)
         out = model(data.x, data.pos, data.edge_index, data.batch)
-        total_mae += (out.squeeze(-1)*std - data.y * std).abs().sum().item()
+        total_mae += (out.squeeze(-1) - data.y).abs().sum().item()
+        # total_mae += (out.squeeze(-1)*std - data.y * std).abs().sum().item()
 
     return total_mae / len(loader.dataset)
 
