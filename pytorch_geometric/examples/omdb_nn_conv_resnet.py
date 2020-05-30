@@ -100,7 +100,7 @@ class Net(torch.nn.Module):
         #print(data.x.shape)
         out1 = F.relu(self.lin0(data.x))
         #print(out.shape)
-        h = out.unsqueeze(0)
+        h = out1.unsqueeze(0)
 
         for i in range(8):
             if i==0:
