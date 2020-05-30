@@ -66,7 +66,7 @@ class Net(torch.nn.Module):
         # out = self.set2set(out, torch.zeros(1, dtype=torch.long, device=device))
         out = torch.mean(out, axis=0)
         # out = F.relu(self.lin1(out))
-        # out = self.lin2(out)
+        out = self.lin2(out)
         return out.view(-1)
 
 
