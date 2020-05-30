@@ -42,11 +42,16 @@ class Net(torch.nn.Module):
 
         self.lin0 = torch.nn.Linear(dataset.num_features, dim)
 
-        nn = Sequential(Linear(4, 128), ReLU(), Linear(128, dim * dim))
+        nn0 = Sequential(Linear(2, 64), ReLU(), Linear(64, 2*dim*dim))
+        nn = Sequential(Linear(2, 64), ReLU(), Linear(64, dim * dim))
+        #nn = Sequential(Linear(5, dim * dim))
+        self.conv0 = NNConv(dim, 2*dim, nn0, aggr='mean')
+        self.gru0 = GRU(2*dim, dim)
+
         self.conv = NNConv(dim, dim, nn, aggr='mean')
         self.gru = GRU(dim, dim)
 
-        self.set2set = Set2Set(dim, processing_steps=3)
+        self.set2set = Set2Set(dim, processing_steps=1)
         self.lin1 = torch.nn.Linear(2 * dim, dim)
         self.lin2 = torch.nn.Linear(dim, 1)
         #self.avp = torch.nn.AdaptiveAvgPool1d(1)
