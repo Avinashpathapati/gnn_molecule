@@ -42,8 +42,8 @@ class Net(torch.nn.Module):
 
         self.lin0 = torch.nn.Linear(dataset.num_features, dim)
 
-        nn0 = Sequential(Linear(2, 64), ReLU(), Linear(64, 2*dim*dim))
-        nn = Sequential(Linear(2, 64), ReLU(), Linear(64, dim * dim))
+        nn0 = Sequential(Linear(1, 64), ReLU(), Linear(64, 2*dim*dim))
+        nn = Sequential(Linear(1, 64), ReLU(), Linear(64, dim * dim))
         #nn = Sequential(Linear(5, dim * dim))
         self.conv0 = NNConv(dim, 2*dim, nn0, aggr='mean')
         self.gru0 = GRU(2*dim, dim)
