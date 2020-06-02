@@ -31,9 +31,9 @@ def inputExtract(self, input, output):
 
 	print(input[0].shape)
 	for data in input[0]:
-		for atom in data[0]:
+		for atom in data:
 			print(atom)
-			atom_id_input_arr.add(atom)
+			atom_id_input_arr.add(atom.numpy())
 
 
 
