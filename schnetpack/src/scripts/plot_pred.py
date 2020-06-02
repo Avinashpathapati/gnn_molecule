@@ -29,6 +29,7 @@ atom_output = []
 
 def inputExtract(self, input, output):
 
+	print(input[0].shape)
 	for data in input[0]:
 		for atom in data[0]:
 			print(atom)
