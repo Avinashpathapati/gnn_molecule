@@ -34,6 +34,8 @@ def printnorm(input, output):
 def main(args):
 	print('predictionsss')
 	device = torch.device("cuda" if args.cuda else "cpu")
+	environment_provider = spk.environment.AseEnvironmentProvider(cutoff=5.0)
+	
 	sch_model = torch.load(os.path.join(args.model_path, 'best_model'), map_location=torch.device(device))
 	sch_model.output_modules[0].out_net[1].out_net[1].register_forward_hook(printnorm)
 
