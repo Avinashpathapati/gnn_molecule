@@ -42,10 +42,10 @@ def outputExtract(self, input, output):
 	print('---------')
 	print(output[0].shape)
 	print(output[10].shape)
-	# for data in output[0]:
-	 for atom_out in output[0].squeeze(1):
-	 	print(atom_out)
-	 	atom_output.add(atom_out)
+
+	for atom_out in output[0].squeeze(1):
+		print(atom_out)
+		atom_output.add(atom_out)
 
 
 
