@@ -33,7 +33,7 @@ def inputExtract(self, input, output):
 	for data in input[0]:
 		for atom in data:
 			print(atom)
-			atom_id_input_arr.add(atom.numpy())
+			atom_id_input_arr.append(atom.numpy())
 
 
 
@@ -46,7 +46,7 @@ def outputExtract(self, input, output):
 
 	for atom_out in output[0].squeeze(1):
 		print(atom_out)
-		atom_output.add(atom_out)
+		atom_output.append(atom_out)
 
 
 
