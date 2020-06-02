@@ -28,7 +28,9 @@ def printnorm(self, input, output):
 	
 	print(input[0].shape)
 	print('---------')
-	print(output.shape)
+	print(output[0].shape)
+	print(output[10].shape)
+
 
 
 def main(args):
