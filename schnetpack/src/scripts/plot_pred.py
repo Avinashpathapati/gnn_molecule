@@ -30,8 +30,7 @@ def printnorm(self, input, output):
 	print('---------')
 	print(output[0].shape)
 	print(output[10].shape)
-	for data in output[0]:
-
+	# for data in output[0]:
 
 
 
