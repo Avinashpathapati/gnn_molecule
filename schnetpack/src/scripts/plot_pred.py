@@ -26,9 +26,9 @@ from schnetpack.utils import (
 
 def printnorm(self, input, output):
 	
-	print(input)
+	print(input.shape)
 	print('---------')
-	print(output)
+	print(output.shape)
 
 
 def main(args):
