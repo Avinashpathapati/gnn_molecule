@@ -28,9 +28,13 @@ atom_output = []
 
 
 def inputExtract(self, input, output):
-	
-	print(input[0].shape)
-	print('---------hi')
+
+	for data in input[0]:
+		for atom in data[0]:
+			print(atom)
+			atom_id_input_arr.add(atom)
+
+
 
 def outputExtract(self, input, output):
 	
@@ -39,6 +43,9 @@ def outputExtract(self, input, output):
 	print(output[0].shape)
 	print(output[10].shape)
 	# for data in output[0]:
+	 for atom_out in output[0].squeeze(1):
+	 	print(atom_out)
+	 	atom_output.add(atom_out)
 
 
 
