@@ -30,6 +30,8 @@ def printnorm(self, input, output):
 	print('---------')
 	print(output[0].shape)
 	print(output[10].shape)
+	for data in output[0]:
+
 
 
 
@@ -40,6 +42,7 @@ def main(args):
 
 	sch_model = torch.load(os.path.join(args.model_path, 'best_model'), map_location=torch.device(device))
 	sch_model.output_modules[0].out_net[1].out_net[1].register_forward_hook(printnorm)
+	print(sch_model.named_modules())
 
 	#reading test data
 	# test_dataset = AtomsData('./cod_predict.db')
@@ -61,6 +64,7 @@ def main(args):
 	mean_abs_err = 0
 	prediction_list = []
 	actual_value_list = []
+
 	print('Started generating predictions')
 	for count, batch in enumerate(test_loader):
 	    
