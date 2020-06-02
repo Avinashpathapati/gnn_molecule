@@ -43,7 +43,7 @@ def main(args):
 	sch_model.output_modules[0].out_net[1].out_net[1].register_forward_hook(printnorm)
 
 	for name, module in sch_model.named_modules():
-		print(module)
+		print(name)
 
 	#reading test data
 	# test_dataset = AtomsData('./cod_predict.db')
