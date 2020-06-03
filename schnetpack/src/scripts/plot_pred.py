@@ -22,6 +22,7 @@ from schnetpack.utils import (
     get_statistics,
     get_output_module
 )
+from graphviz import Graph
 
 atom_id_input_arr = []
 atom_output_arr = []
@@ -30,15 +31,31 @@ orange_indices_arr=[]
 
 rec_ct = 0
 
-# def inputExtract(self, input, output):
-
-# 	print(input[0].shape)
-# 	for data in input[0]:
-# 		for atom in data:
-# 			print(atom)
-# 			atom_id_input_arr.append(atom.numpy())
 
 
+def constGraph():
+
+	for i in range(0,len(atom_id_input_arr)):
+		atom_id_row = atom_id_input_arr[i]
+		atom_output_row = atom_output_arr[i]
+		orange_indices_row = orange_indices_arr[i]
+		g = Graph('G', filename= chemical_formula[i]+'.gv', engine='sfdp')
+		for j in range(0,len(atom_id_row)):
+			if j in orange_indices_arr:
+				g.attr('node', style='filled', color='orange')
+			else:
+				g.attr('node', style='filled', color='white')
+			
+			g.node(j, label=atom_id_row[j])
+
+		for j in range(0,len(atom_id_row)):
+			for k in range(j+1, len(atom_id_row)):
+				g.edge(j, k)
+		
+		g.view()
+
+
+	
 
 
 def outputExtract(self, input, output):
@@ -51,12 +68,14 @@ def outputExtract(self, input, output):
 	atom_output = []
 	global rec_ct
 	if rec_ct in [0,10,100,500]:
+		print(rec_ct)
 		for atom_out in output[0].squeeze(1):
 			atom_output.append(atom_out.detach().numpy())
 
 		atom_output_np = np.array(atom_output)
 		orange_indices_arr.append(np.where((atom_output_np >=np.mean(atom_output_np)-np.std(atom_output_np)) & 
 			(atom_output_np<=np.mean(atom_output_np)+np.std(atom_output_np)))[0].tolist())
+		
 		atom_output_arr.append(atom_output)
 
 
@@ -106,8 +125,13 @@ def main(args):
 	actual_value_list = []
 
 	print('Started generating predictions')
+	#to stop pred after reaching max rec_ct and start constructing graph
+	rec_id=0
 	for count, batch in enumerate(test_loader):
 	    
+	    rec_id+=1
+	    if(rec_id>10):
+	    	break
 	    # move batch to GPU, if necessary
 	    print('before batch')
 	    batch = {k: v.to(device) for k, v in batch.items()}
@@ -122,10 +146,11 @@ def main(args):
 
 
 
-	cod_arr = np.genfromtxt(os.path.join('/home/s3754715/gnn_molecule/schnetpack/dataset/OMDB-GAP1_v1.1', 'CODids.csv'))
-	cod_list = cod_arr[10000:].tolist()
-	results_df = pd.DataFrame({'cod':cod_list, 'prediction':prediction_list, 'actual': actual_value_list})
-	results_df.to_csv('./predictions.csv')
+	constGraph()
+	# cod_arr = np.genfromtxt(os.path.join('/home/s3754715/gnn_molecule/schnetpack/dataset/OMDB-GAP1_v1.1', 'CODids.csv'))
+	# cod_list = cod_arr[10000:].tolist()
+	# results_df = pd.DataFrame({'cod':cod_list, 'prediction':prediction_list, 'actual': actual_value_list})
+	# results_df.to_csv('./predictions.csv')
 
 
 
