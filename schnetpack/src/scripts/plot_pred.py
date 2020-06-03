@@ -71,7 +71,7 @@ def outputExtract(self, input, output):
 	# print(output[10].shape)]
 	atom_output = []
 	global rec_ct
-	if rec_ct in [0,10,100,500]:
+	if rec_ct in [0,10]:
 		print(rec_ct)
 		for atom_out in output[0].squeeze(1):
 			atom_output.append(atom_out.detach().numpy())
@@ -80,6 +80,7 @@ def outputExtract(self, input, output):
 		orange_indices_arr.append(np.where((atom_output_np >=np.mean(atom_output_np)-np.std(atom_output_np)) & 
 			(atom_output_np<=np.mean(atom_output_np)+np.std(atom_output_np)))[0].tolist())
 		
+		print(orange_indices_arr)
 		atom_output_arr.append(atom_output)
 
 
@@ -118,7 +119,7 @@ def main(args):
 	)
 	#to fetch the chemical symbols at random ids to construct data to print in graph
 
-	for id in [0,10,100,500]:
+	for id in [0,10]:
 		atom_id_input_arr.append(test.get_atoms(idx=id).get_chemical_symbols())
 		chem_formula = test.get_atoms(idx=id).get_chemical_formula()
 		chemical_formula.append(chem_formula)
