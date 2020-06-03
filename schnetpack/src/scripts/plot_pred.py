@@ -24,29 +24,37 @@ from schnetpack.utils import (
 )
 
 atom_id_input_arr = []
-atom_output = []
+atom_output_arr = []
+chemical_formula = []
 
+rec_ct = 0
 
-def inputExtract(self, input, output):
+# def inputExtract(self, input, output):
 
-	print(input[0].shape)
-	for data in input[0]:
-		for atom in data:
-			print(atom)
-			atom_id_input_arr.append(atom.numpy())
+# 	print(input[0].shape)
+# 	for data in input[0]:
+# 		for atom in data:
+# 			print(atom)
+# 			atom_id_input_arr.append(atom.numpy())
 
 
 
 def outputExtract(self, input, output):
 	
+	
 	print(input[0].shape)
 	print('---------')
 	print(output[0].shape)
-	# print(output[10].shape)
+	# print(output[10].shape)]
+	atom_output = []
+	if rec_ct in [0,10,100,500]:
+		for atom_out in output[0].squeeze(1):
+			print(atom_out.numpy())
+			atom_output.append(atom_out.numpy())
 
-	for atom_out in output[0].squeeze(1):
-		print(atom_out)
-		atom_output.append(atom_out)
+	atom_output_arr.append(atom_output)
+
+	rec_ct += 1
 
 
 
@@ -57,7 +65,7 @@ def main(args):
 
 	sch_model = torch.load(os.path.join(args.model_path, 'best_model'), map_location=torch.device(device))
 
-	sch_model.representation.embedding.register_forward_hook(inputExtract)
+	# sch_model.representation.embedding.register_forward_hook(inputExtract)
 	sch_model.output_modules[0].out_net[1].out_net[1].register_forward_hook(outputExtract)
 
 	# for name, module in sch_model.named_modules():
@@ -77,12 +85,11 @@ def main(args):
 		num_val=1000,
 		split_file=split_path
 	)
-	print(test[0])
-	print(test[1])
-	#to fetch the chemical symbols
+	#to fetch the chemical symbols at random ids to construct data to print in graph
 
-	print(test.get_atoms(idx=0).get_chemical_symbols())
-	print(test.get_atoms(idx=1).get_chemical_symbols())
+	for id in [0,10,100,500]:
+		atom_id_input_arr.append(test.get_atoms(idx=id).get_chemical_symbols())
+		chemical_formula.append(test.get_atoms(idx=id).get_chemical_formula)
 	
 	test_loader = spk.AtomsLoader(test, batch_size=1, #num_workers=2
 		)
