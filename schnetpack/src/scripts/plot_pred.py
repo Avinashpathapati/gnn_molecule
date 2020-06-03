@@ -41,7 +41,9 @@ def constGraph():
 		atom_output_row = atom_output_arr[i]
 		orange_indices_row = orange_indices_arr[i]
 		print(chemical_formula[i])
-		g = Graph('G', format='png')
+		g = Graph('G' 
+			# filename= chemical_formula[i]+'.gv'
+			)
 		for j in range(0,len(atom_id_row)):
 			if j in orange_indices_arr:
 				g.attr('node', style='filled', color='orange')
@@ -55,7 +57,7 @@ def constGraph():
 				g.edge(str(j), str(k))
 		
 		# g.view()
-		g.save(filename='./'+chemical_formula[i]+'.png')
+		g.render(filename='./'+chemical_formula[i]+'.gv',view=False)
 
 
 	
