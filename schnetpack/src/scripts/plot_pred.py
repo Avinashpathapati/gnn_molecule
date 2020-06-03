@@ -43,7 +43,7 @@ def constGraph():
 		print(chemical_formula[i])
 		g = Graph('G', filename= chemical_formula[i]+'.gv')
 		for j in range(0,len(atom_id_row)):
-			if j in orange_indices_arr:
+			if j in orange_indices_row:
 				print('orangeee')
 				g.attr('node', style='filled', color='orange')
 			else:
