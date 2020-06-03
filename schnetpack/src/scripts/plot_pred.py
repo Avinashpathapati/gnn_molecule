@@ -118,7 +118,7 @@ def main(args):
 
 	for id in [0,10,100,500]:
 		atom_id_input_arr.append(test.get_atoms(idx=id).get_chemical_symbols())
-		chemical_formula.append(test.get_atoms(idx=id).get_chemical_formula.symbols)
+		chemical_formula.append(test.get_atoms(idx=id).get_chemical_formula.symbols())
 	
 	test_loader = spk.AtomsLoader(test, batch_size=1, #num_workers=2
 		)
