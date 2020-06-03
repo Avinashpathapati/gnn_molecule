@@ -119,6 +119,13 @@ def main(args):
 	)
 	#to fetch the chemical symbols at random ids to construct data to print in graph
 
+	for k, v in omdData[0].items():
+		print('-', k, ':', v.shape)
+
+	for k, v in omdData[10].items():
+		print('-', k, ':', v.shape)
+
+
 	for id in [0,10]:
 		atom_id_input_arr.append(test.get_atoms(idx=id).get_chemical_symbols())
 		chem_formula = test.get_atoms(idx=id).get_chemical_formula()
