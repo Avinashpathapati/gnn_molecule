@@ -50,8 +50,8 @@ def outputExtract(self, input, output):
 	global rec_ct
 	if rec_ct in [0,10,100,500]:
 		for atom_out in output[0].squeeze(1):
-			print(atom_out.numpy())
-			atom_output.append(atom_out.numpy())
+			print(atom_out.detach().numpy())
+			atom_output.append(atom_out.detach().numpy())
 
 	atom_output_arr.append(atom_output)
 
