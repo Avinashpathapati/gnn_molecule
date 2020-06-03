@@ -56,7 +56,7 @@ def outputExtract(self, input, output):
 
 		atom_output_np = np.array(atom_output)
 		orange_indices_arr.append(np.where((atom_output_np >=np.mean(atom_output_np)-np.std(atom_output_np)) & 
-			(atom_output_np<=np.mean(atom_output_np)+np.std(atom_output_np))).tolist())
+			(atom_output_np<=np.mean(atom_output_np)+np.std(atom_output_np)))[0].tolist())
 		atom_output_arr.append(atom_output)
 
 
