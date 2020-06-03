@@ -55,7 +55,7 @@ def constGraph():
 				g.edge(str(j), str(k))
 		
 		# g.view()
-		g.render(filename='./'+chemical_formula[i]+'.dot')
+		g.save(filename='./'+chemical_formula[i]+'.dot')
 
 
 	
