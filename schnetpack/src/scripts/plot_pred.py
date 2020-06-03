@@ -77,8 +77,8 @@ def main(args):
 		num_val=1000,
 		split_file=split_path
 	)
-	print(test[0].shape)
-	print(test[1].shape)
+	print(test[0])
+	print(test[1])
 	test_loader = spk.AtomsLoader(test, batch_size=1, #num_workers=2
 		)
 	mean_abs_err = 0
