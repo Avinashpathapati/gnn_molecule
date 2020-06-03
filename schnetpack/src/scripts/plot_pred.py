@@ -54,7 +54,8 @@ def constGraph():
 			for k in range(j+1, len(atom_id_row)):
 				g.edge(str(j), str(k))
 		
-		g.view()
+		# g.view()
+		g.render(filename='./'+chemical_formula[i]+'.dot')
 
 
 	
