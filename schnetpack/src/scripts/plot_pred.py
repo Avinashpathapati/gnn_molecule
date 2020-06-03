@@ -26,6 +26,7 @@ from schnetpack.utils import (
 atom_id_input_arr = []
 atom_output_arr = []
 chemical_formula = []
+orange_indices_arr=[]
 
 rec_ct = 0
 
@@ -36,6 +37,7 @@ rec_ct = 0
 # 		for atom in data:
 # 			print(atom)
 # 			atom_id_input_arr.append(atom.numpy())
+
 
 
 
@@ -50,10 +52,15 @@ def outputExtract(self, input, output):
 	global rec_ct
 	if rec_ct in [0,10,100,500]:
 		for atom_out in output[0].squeeze(1):
-			print(atom_out.detach().numpy())
 			atom_output.append(atom_out.detach().numpy())
 
-	atom_output_arr.append(atom_output)
+		atom_output_np = np.array(atom_output)
+		orange_indices_arr.append(np.where((atom_output_np >=np.mean(atom_output_np)-np.std(atom_output_np)) & 
+			(atom_output_np<=np.mean(atom_output_np)+np.std(atom_output_np))).tolist())
+		atom_output_arr.append(atom_output)
+
+
+
 
 	rec_ct += 1
 
