@@ -79,6 +79,11 @@ def main(args):
 	)
 	print(test[0])
 	print(test[1])
+	#to fetch the chemical symbols
+
+	print(test.get_atoms(idx=0).get_chemical_symbols())
+	print(test.get_atoms(idx=1).get_chemical_symbols())
+	
 	test_loader = spk.AtomsLoader(test, batch_size=1, #num_workers=2
 		)
 	mean_abs_err = 0
