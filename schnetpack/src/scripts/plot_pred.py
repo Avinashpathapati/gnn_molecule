@@ -36,9 +36,11 @@ rec_ct = 0
 def constGraph():
 
 	for i in range(0,len(atom_id_input_arr)):
+
 		atom_id_row = atom_id_input_arr[i]
 		atom_output_row = atom_output_arr[i]
 		orange_indices_row = orange_indices_arr[i]
+		print(chemical_formula[i])
 		g = Graph('G', filename= chemical_formula[i]+'.gv', engine='sfdp')
 		for j in range(0,len(atom_id_row)):
 			if j in orange_indices_arr:
