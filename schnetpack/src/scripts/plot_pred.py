@@ -47,14 +47,14 @@ def outputExtract(self, input, output):
 	print(output[0].shape)
 	# print(output[10].shape)]
 	atom_output = []
-	if rec_ct in [0,10,100,500]:
+	if self.rec_ct in [0,10,100,500]:
 		for atom_out in output[0].squeeze(1):
 			print(atom_out.numpy())
 			atom_output.append(atom_out.numpy())
 
 	atom_output_arr.append(atom_output)
 
-	rec_ct += 1
+	self.rec_ct += 1
 
 
 
