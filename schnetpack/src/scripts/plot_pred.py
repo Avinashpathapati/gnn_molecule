@@ -48,11 +48,11 @@ def constGraph():
 			else:
 				g.attr('node', style='filled', color='white')
 			
-			g.node(j, label=atom_id_row[j])
+			g.node(str(j), label=atom_id_row[j])
 
 		for j in range(0,len(atom_id_row)):
 			for k in range(j+1, len(atom_id_row)):
-				g.edge(j, k)
+				g.edge(str(j), str(k))
 		
 		g.view()
 
@@ -119,7 +119,6 @@ def main(args):
 	for id in [0,10,100,500]:
 		atom_id_input_arr.append(test.get_atoms(idx=id).get_chemical_symbols())
 		chem_formula = test.get_atoms(idx=id).get_chemical_formula()
-		print(chem_formula)
 		chemical_formula.append(chem_formula)
 	
 	test_loader = spk.AtomsLoader(test, batch_size=1, #num_workers=2
