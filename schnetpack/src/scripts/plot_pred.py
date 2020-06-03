@@ -42,7 +42,7 @@ def outputExtract(self, input, output):
 	print(input[0].shape)
 	print('---------')
 	print(output[0].shape)
-	print(output[10].shape)
+	# print(output[10].shape)
 
 	for atom_out in output[0].squeeze(1):
 		print(atom_out)
@@ -60,8 +60,8 @@ def main(args):
 	sch_model.representation.embedding.register_forward_hook(inputExtract)
 	sch_model.output_modules[0].out_net[1].out_net[1].register_forward_hook(outputExtract)
 
-	for name, module in sch_model.named_modules():
-		print(name)
+	# for name, module in sch_model.named_modules():
+	# 	print(name)
 
 	#reading test data
 	# test_dataset = AtomsData('./cod_predict.db')
@@ -77,8 +77,9 @@ def main(args):
 		num_val=1000,
 		split_file=split_path
 	)
-	print(len(test))
-	test_loader = spk.AtomsLoader(test, batch_size=32, #num_workers=2
+	print(test[0].shape)
+	print(test[1].shape)
+	test_loader = spk.AtomsLoader(test, batch_size=1, #num_workers=2
 		)
 	mean_abs_err = 0
 	prediction_list = []
