@@ -135,7 +135,7 @@ def main(args):
 	for count, batch in enumerate(test_loader):
 	    
 	    rec_id+=1
-	    if(rec_id>10):
+	    if(rec_id>11):
 	    	break
 	    # move batch to GPU, if necessary
 	    print('before batch')
