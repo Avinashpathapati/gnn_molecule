@@ -120,10 +120,10 @@ def main(args):
 	#to fetch the chemical symbols at random ids to construct data to print in graph
 
 	for k, v in omdData[0].items():
-		print('-', k, ':', v['_neighbors'][0].shape)
+		print('-', k, ':', v['_neighbors'])
 
 	for k, v in omdData[10].items():
-		print('-', k, ':', v['_neighbors'][0].shape)
+		print('-', k, ':', v['_neighbors'])
 
 
 	for id in [0,10]:
