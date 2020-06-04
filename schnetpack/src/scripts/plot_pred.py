@@ -45,7 +45,7 @@ def constGraph():
 		print(chemical_formula[i])
 		g = Graph('G', filename= chemical_formula[i]+'.gv')
 		for j in range(0,len(atom_id_row)):
-			print(j)
+			# print(j)
 			if j in orange_indices_row:
 				print('orangeee')
 				g.attr('node', style='filled', color='orange')
@@ -54,6 +54,8 @@ def constGraph():
 			
 			g.node(str(j), label=atom_id_row[j])
 
+		print('-------------')
+		print(len(atom_id_row))
 		for j in range(0,len(atom_id_row)):
 			# print(j)
 			print(neighbour_row[j])
