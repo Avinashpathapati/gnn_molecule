@@ -28,6 +28,7 @@ atom_id_input_arr = []
 atom_output_arr = []
 chemical_formula = []
 orange_indices_arr=[]
+neighbour_list = []
 
 rec_ct = 0
 
@@ -40,6 +41,7 @@ def constGraph():
 		atom_id_row = atom_id_input_arr[i]
 		atom_output_row = atom_output_arr[i]
 		orange_indices_row = orange_indices_arr[i]
+		neighbour_row = neighbour_list[i]
 		print(chemical_formula[i])
 		g = Graph('G', filename= chemical_formula[i]+'.gv')
 		for j in range(0,len(atom_id_row)):
@@ -52,8 +54,9 @@ def constGraph():
 			g.node(str(j), label=atom_id_row[j])
 
 		for j in range(0,len(atom_id_row)):
-			for k in range(j+1, len(atom_id_row)):
-				g.edge(str(j), str(k))
+			for k in range(0, len(neighbour_row[j])):
+				if not neighbour_row[j][k] == -1
+					g.edge(str(j), str(neighbour_row[j][k]))
 		
 		# g.view()
 		g.save(filename='./'+chemical_formula[i]+'.dot')
@@ -130,6 +133,8 @@ def main(args):
 		atom_id_input_arr.append(test.get_atoms(idx=id).get_chemical_symbols())
 		chem_formula = test.get_atoms(idx=id).get_chemical_formula()
 		chemical_formula.append(chem_formula)
+		neighbour_list.append(omdData[id]['_neighbors'].numpy().tolist())
+
 	
 	test_loader = spk.AtomsLoader(test, batch_size=1, #num_workers=2
 		)
