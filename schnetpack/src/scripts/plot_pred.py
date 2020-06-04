@@ -87,7 +87,7 @@ def outputExtract(self, input, output):
 		orange_indices_arr.append(np.where((atom_output_np >=np.mean(atom_output_np)-np.std(atom_output_np)) & 
 			(atom_output_np<=np.mean(atom_output_np)+np.std(atom_output_np)))[0].tolist())
 		
-		print(orange_indices_arr)
+		# print(orange_indices_arr)
 		atom_output_arr.append(atom_output)
 
 
@@ -150,9 +150,7 @@ def main(args):
 	    if(rec_id>11):
 	    	break
 	    # move batch to GPU, if necessary
-	    print('before batch')
 	    batch = {k: v.to(device) for k, v in batch.items()}
-	    print('after batch')
 	    # apply model
 	    pred = sch_model(batch)
 	    prediction_list.extend(pred['band_gap'].detach().cpu().numpy().flatten().tolist())
