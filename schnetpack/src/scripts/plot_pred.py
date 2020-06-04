@@ -131,8 +131,8 @@ def main(args):
 		atom_id_input_arr.append(test.get_atoms(idx=id).get_chemical_symbols())
 		chem_formula = test.get_atoms(idx=id).get_chemical_formula()
 		chemical_formula.append(chem_formula)
-		print(omdData[id]['_neighbors'].numpy().shape)
-		neighbour_list.append(omdData[id]['_neighbors'].numpy().tolist())
+		print(test[id]['_neighbors'].numpy().shape)
+		neighbour_list.append(test[id]['_neighbors'].numpy().tolist())
 
 	
 	test_loader = spk.AtomsLoader(test, batch_size=1, #num_workers=2
