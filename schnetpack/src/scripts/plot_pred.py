@@ -127,6 +127,7 @@ def main(args):
 		atom_id_input_arr.append(test.get_atoms(idx=id).get_chemical_symbols())
 		chem_formula = test.get_atoms(idx=id).get_chemical_formula()
 		chemical_formula.append(chem_formula)
+		print(omdData[id]['_neighbors'].numpy().shape)
 		neighbour_list.append(omdData[id]['_neighbors'].numpy().tolist())
 
 	
