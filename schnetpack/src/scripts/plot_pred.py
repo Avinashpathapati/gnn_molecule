@@ -53,11 +53,9 @@ def constGraph():
 			
 			g.node(str(j), label=atom_id_row[j])
 
-		print('-------------')
-		print(range(0,len(atom_id_row)))
+		
 		for j in range(0,len(atom_id_row)):
 			# print(j)
-			print(j)
 			for k in range(0, len(neighbour_row[j])):
 				if not neighbour_row[j][k] == -1:
 					g.edge(str(j), str(neighbour_row[j][k]))
@@ -80,6 +78,7 @@ def outputExtract(self, input, output):
 	global rec_ct
 	if rec_ct in [0,10]:
 		print(rec_ct)
+		print(output[0].shape)
 		for atom_out in output[0].squeeze(1):
 			atom_output.append(atom_out.detach().numpy())
 
