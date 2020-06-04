@@ -47,7 +47,6 @@ def constGraph():
 		for j in range(0,len(atom_id_row)):
 			# print(j)
 			if j in orange_indices_row:
-				print('orangeee')
 				g.attr('node', style='filled', color='orange')
 			else:
 				g.attr('node', style='filled', color='white')
@@ -73,9 +72,9 @@ def constGraph():
 def outputExtract(self, input, output):
 	
 	
-	print(input[0].shape)
-	print('---------')
-	print(output[0].shape)
+	# print(input[0].shape)
+	# print('---------')
+	# print(output[0].shape)
 	# print(output[10].shape)]
 	atom_output = []
 	global rec_ct
