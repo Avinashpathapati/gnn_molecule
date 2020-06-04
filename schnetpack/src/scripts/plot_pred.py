@@ -55,7 +55,7 @@ def constGraph():
 
 		for j in range(0,len(atom_id_row)):
 			for k in range(0, len(neighbour_row[j])):
-				if not neighbour_row[j][k] == -1
+				if not neighbour_row[j][k] == -1:
 					g.edge(str(j), str(neighbour_row[j][k]))
 		
 		# g.view()
