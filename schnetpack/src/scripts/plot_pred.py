@@ -76,9 +76,9 @@ def outputExtract(self, input, output):
 	# print(output[10].shape)]
 	atom_output = []
 	global rec_ct
-	if rec_ct in [0,10]:
-		print(rec_ct)
-		print(output[0].shape)
+	if rec_ct in [0,10,20,50]:
+		# print(rec_ct)
+		# print(output[0].shape)
 		for atom_out in output[0].squeeze(1):
 			atom_output.append(atom_out.detach().numpy())
 
@@ -126,7 +126,7 @@ def main(args):
 	#to fetch the chemical symbols at random ids to construct data to print in graph
 
 
-	for id in [0,10]:
+	for id in [0,10,20,50]:
 		atom_id_input_arr.append(test.get_atoms(idx=id).get_chemical_symbols())
 		chem_formula = test.get_atoms(idx=id).get_chemical_formula()
 		chemical_formula.append(chem_formula)
@@ -146,7 +146,7 @@ def main(args):
 	for count, batch in enumerate(test_loader):
 	    
 	    rec_id+=1
-	    if(rec_id>11):
+	    if(rec_id>51):
 	    	break
 	    # move batch to GPU, if necessary
 	    batch = {k: v.to(device) for k, v in batch.items()}
