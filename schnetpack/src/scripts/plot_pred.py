@@ -129,7 +129,7 @@ def main(args):
 		chem_formula = omdData.get_atoms(idx=rec_num).get_chemical_formula()
 		formula_dict[chem_formula]=rec_num
 
-	cod_array = np.genfromtxt(os.path.join(args.datapath, 'CODids.csv'), delimiter=',')
+	cod_array = np.genfromtxt(os.path.join('/home/s3754715/gnn_molecule/schnetpack/dataset/', 'CODids.csv'), delimiter=',')
 
 
 	#to fetch the COD using chemical formula from dictionary at random ids to construct data to print in graph
