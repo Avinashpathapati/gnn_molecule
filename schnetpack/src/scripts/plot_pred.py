@@ -26,9 +26,10 @@ from graphviz import Graph
 
 atom_id_input_arr = []
 atom_output_arr = []
-chemical_formula = []
+cod = []
 orange_indices_arr=[]
 neighbour_list = []
+formula_dict = {}
 
 rec_ct = 0
 
@@ -42,8 +43,8 @@ def constGraph():
 		atom_output_row = atom_output_arr[i]
 		orange_indices_row = orange_indices_arr[i]
 		neighbour_row = neighbour_list[i]
-		print(chemical_formula[i])
-		g = Graph('G', filename= chemical_formula[i]+'.gv')
+		print(cod[i])
+		g = Graph('G', filename= cod[i]+'.gv')
 		for j in range(0,len(atom_id_row)):
 			# print(j)
 			if j in orange_indices_row:
@@ -61,7 +62,7 @@ def constGraph():
 					g.edge(str(j), str(neighbour_row[j][k]))
 		
 		# g.view()
-		g.save(filename='./'+chemical_formula[i]+'.dot')
+		g.save(filename='./'+cod[i]+'.dot')
 
 
 	
@@ -123,13 +124,19 @@ def main(args):
 		num_val=1000,
 		split_file=split_path
 	)
-	#to fetch the chemical symbols at random ids to construct data to print in graph
+	#constructing chemical formula and COD array
+	for rec_num in range(0,len(omdData)):
+		chem_formula = omdData.get_atoms(idx=rec_num).get_chemical_formula()
+		formula_dict[chem_formula]=rec_num
+
+	cod_array = np.genfromtxt(os.path.join(args.datapath, 'CODids.csv'), delimiter=',')
 
 
+	#to fetch the COD using chemical formula from dictionary at random ids to construct data to print in graph
 	for id in [0,10,20,50]:
 		atom_id_input_arr.append(test.get_atoms(idx=id).get_chemical_symbols())
 		chem_formula = test.get_atoms(idx=id).get_chemical_formula()
-		chemical_formula.append(chem_formula)
+		cod.append(cod_array[formula_dict[chem_formula]])
 		print(test[id]['_neighbors'].numpy().shape)
 		neighbour_list.append(test[id]['_neighbors'].numpy().tolist())
 
@@ -139,7 +146,6 @@ def main(args):
 	mean_abs_err = 0
 	prediction_list = []
 	actual_value_list = []
-
 	print('Started generating predictions')
 	#to stop pred after reaching max rec_ct and start constructing graph
 	rec_id=0
