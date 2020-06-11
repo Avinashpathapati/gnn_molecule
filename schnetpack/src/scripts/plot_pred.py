@@ -44,7 +44,7 @@ def constGraph():
 		orange_indices_row = orange_indices_arr[i]
 		neighbour_row = neighbour_list[i]
 		print(cod[i])
-		g = Graph('G', filename= cod[i]+'.gv')
+		g = Graph('G', filename= str(cod[i])+'.gv')
 		for j in range(0,len(atom_id_row)):
 			# print(j)
 			if j in orange_indices_row:
@@ -62,7 +62,7 @@ def constGraph():
 					g.edge(str(j), str(neighbour_row[j][k]))
 		
 		# g.view()
-		g.save(filename='./'+cod[i]+'.dot')
+		g.save(filename='./'+str(cod[i])+'.dot')
 
 
 	
