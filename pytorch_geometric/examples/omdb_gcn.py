@@ -40,18 +40,18 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        self.conv1 = GCNConv(dataset.num_features, 128, cached=False)
-        self.conv2 = GCNConv(128, 128, cached=False)
-        self.conv3 = GCNConv(128, 64, cached=False)
-        self.conv4 = GCNConv(64, 64, cached=False)
-        #self.conv5 = GCNConv(384, 256, cached=False)
-        self.set2set = Set2Set(64, processing_steps=2)
+        self.conv1 = GCNConv(dataset.num_features, 96, cached=False)
+        self.conv2 = GCNConv(96, 256, cached=False)
+        self.conv3 = GCNConv(256, 384, cached=False)
+        self.conv4 = GCNConv(384, 384, cached=False)
+        self.conv5 = GCNConv(384, 256, cached=False)
+        self.set2set = Set2Set(256, processing_steps=3)
 
-        #self.linear1 = torch.nn.Linear(512, 512)
-        #self.linear2 = torch.nn.Linear(512, 512)
-        self.linear3 = torch.nn.Linear(128, 64)
-        #self.linear4 = torch.nn.Linear(256, 128)
-        #self.linear5 = torch.nn.Linear(128, 64)
+        self.linear1 = torch.nn.Linear(512, 512)
+        self.linear2 = torch.nn.Linear(512, 512)
+        self.linear3 = torch.nn.Linear(512, 256)
+        self.linear4 = torch.nn.Linear(256, 128)
+        self.linear5 = torch.nn.Linear(128, 64)
         self.linear6 = torch.nn.Linear(64, 32)
         self.linear7 = torch.nn.Linear(32, 1)
         #self.avp = torch.nn.AdaptiveAvgPool1d(1)
@@ -69,7 +69,7 @@ class Net(torch.nn.Module):
         x = F.relu(self.conv2(x, edge_index))
         x = F.relu(self.conv3(x, edge_index))
         x = F.relu(self.conv4(x, edge_index))
-        #x = F.relu(self.conv5(x, edge_index))
+        x = F.relu(self.conv5(x, edge_index))
         #print(x.shape)
         #x = F.dropout(x, training=self.training)
         #x = F.relu(self.conv3(x, edge_index))
@@ -77,15 +77,15 @@ class Net(torch.nn.Module):
         # x = F.dropout(x, training=self.training)
         x = self.set2set(x, torch.zeros(1, dtype=torch.long, device=device))
         #print(x.shape)
-        # x = F.relu(self.linear1(x))
-        # #print(x.shape)
-        # x = F.relu(self.linear2(x))
+        x = F.relu(self.linear1(x))
+        #print(x.shape)
+        x = F.relu(self.linear2(x))
 
         x = F.relu(self.linear3(x))
 
-        # x = F.relu(self.linear4(x))
+        x = F.relu(self.linear4(x))
 
-        # x = F.relu(self.linear5(x))
+        x = F.relu(self.linear5(x))
 
         x = F.relu(self.linear6(x))
 
@@ -100,7 +100,7 @@ class Net(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #device = torch.device('cuda')
 model = Net().to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
                                                        factor=0.7, patience=25,
                                                        min_lr=1e-6)
