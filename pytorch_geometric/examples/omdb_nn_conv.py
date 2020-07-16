@@ -102,13 +102,9 @@ class Net(torch.nn.Module):
         #print(out.shape)
         h = out.unsqueeze(0)
 
-        for i in range(8):
-            if i==0:
-                m = F.relu(self.conv0(out, data.edge_index, data.edge_attr))
-                out, h = self.gru0(m.unsqueeze(0), h)
-            else:
-                m = F.relu(self.conv(out, data.edge_index, data.edge_attr))
-                out, h = self.gru(m.unsqueeze(0), h)
+        for i in range(3):
+            m = F.relu(self.conv(out, data.edge_index, data.edge_attr))
+            out, h = self.gru(m.unsqueeze(0), h)
             out = out.squeeze(0)
 
         #print(out.shape)
