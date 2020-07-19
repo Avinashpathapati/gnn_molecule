@@ -136,8 +136,8 @@ def main(args):
 		split_path = os.path.join(args.model_path, "split.npz")
 		train, val, test = spk.train_test_split(
 			data=omdData,
-			num_train=1000,
-			num_val=9000,
+			num_train=9000,
+			num_val=1000,
 			split_file=split_path
 		)
 		print('-----------')
