@@ -36,7 +36,7 @@ def simple_loss_fn(args):
 def model(args,omdData,atomrefs, means, stddevs):
 
 	schnet = spk.representation.SchNet(
-		n_atom_basis=args.features, n_filters=args.features, n_gaussians=50, n_interactions=3,
+		n_atom_basis=args.features, n_filters=args.features, n_gaussians=50, n_interactions=1,
 		cutoff=5.0, cutoff_network=spk.nn.cutoff.CosineCutoff
 	)
 	output_module = get_output_module(
