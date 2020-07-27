@@ -184,11 +184,12 @@ def main(args):
 		    tmp = torch.sum(torch.abs(pred[args.property]-batch[args.property]))
 		    tmp = tmp.detach().cpu().numpy() # detach from graph & convert to numpy
 		    err += tmp
-
+		    print(tmp)
 		    # log progress
 		    percent = '{:3.2f}'.format(count/len(test_loader)*100)
 		    print('Progress:', percent+'%'+' '*(5-len(percent)), end="\r")
 
+		
 		err /= len(test)
 		print('Test MAE', np.round(err, 3), 'eV =',
 		      np.round(err / (kcal/mol), 3), 'kcal/mol')
