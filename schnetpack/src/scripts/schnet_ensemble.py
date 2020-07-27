@@ -61,13 +61,14 @@ def main(args):
 
 		    # apply model
 		    pred_1 = sch_model_1(batch)
-		    pred_2 = sch_model_2(batch)
-		    pred_3 = sch_model_3(batch)
-		    pred_4 = sch_model_4(batch)
-		    pred_5 = sch_model_5(batch)
+		    # pred_2 = sch_model_2(batch)
+		    # pred_3 = sch_model_3(batch)
+		    # pred_4 = sch_model_4(batch)
+		    # pred_5 = sch_model_5(batch)
 
 		    # calculate absolute error
-		    tmp = torch.sum(torch.abs(torch.mean(torch.stack([pred_1[args.property], pred_2[args.property], pred_3[args.property], pred_4[args.property], pred_5[args.property]],dim=1), dim=1)-batch[args.property]))
+		    tmp = torch.sum(torch.abs(torch.mean(pred_1[args.property], dim=1)-batch[args.property]))
+		    # tmp = torch.sum(torch.abs(torch.mean(torch.stack([pred_1[args.property], pred_2[args.property], pred_3[args.property], pred_4[args.property], pred_5[args.property]],dim=1), dim=1)-batch[args.property]))
 		    tmp = tmp.detach().cpu().numpy() # detach from graph & convert to numpy
 		    print(tmp)
 		    err += tmp
