@@ -69,6 +69,7 @@ def main(args):
 		    # calculate absolute error
 		    tmp = torch.sum(torch.abs(torch.mean(torch.stack([pred_1[args.property], pred_2[args.property], pred_3[args.property], pred_4[args.property], pred_5[args.property]],dim=1), dim=1)-batch[args.property]))
 		    tmp = tmp.detach().cpu().numpy() # detach from graph & convert to numpy
+		    print(tmp)
 		    err += tmp
 
 		    # log progress
