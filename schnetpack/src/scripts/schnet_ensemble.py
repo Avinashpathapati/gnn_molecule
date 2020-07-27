@@ -54,6 +54,7 @@ def main(args):
 	test_loader = spk.AtomsLoader(test, batch_size=16, num_workers=2
 		)
 
+	err = 0
 	for count, batch in enumerate(test_loader):
 		    # move batch to GPU, if necessary
 		    batch = {k: v.to(device) for k, v in batch.items()}
