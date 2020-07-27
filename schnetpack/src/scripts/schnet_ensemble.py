@@ -28,11 +28,11 @@ def main(args):
 	device = torch.device("cuda" if args.cuda else "cpu")
 	environment_provider = spk.environment.AseEnvironmentProvider(cutoff=5.0)
 
-	sch_model_1 = torch.load(os.path.join('/home/s3754715/gnn_molecule/schnetpack/model_2020-06-23-18-44-59', 'best_model'))
-	sch_model_2 = torch.load(os.path.join('/home/s3754715/gnn_molecule/schnetpack/model_2020-06-23-18-44-04', 'best_model'))
-	sch_model_3 = torch.load(os.path.join('/home/s3754715/gnn_molecule/schnetpack/model_2020-06-23-18-44-00', 'best_model'))
-	sch_model_4 = torch.load(os.path.join('/home/s3754715/gnn_molecule/schnetpack/model_2020-06-23-18-41-59', 'best_model'))
-	sch_model_5 = torch.load(os.path.join('/home/s3754715/gnn_molecule/schnetpack/model_2020-06-15-04-47-32', 'best_model'))
+	sch_model_1 = torch.load(os.path.join('/home/s3754715/gnn_molecule/schnetpack/model_2020-06-23-18-44-59', 'best_model'), map_location=torch.device('cpu'))
+	sch_model_2 = torch.load(os.path.join('/home/s3754715/gnn_molecule/schnetpack/model_2020-06-23-18-44-04', 'best_model'), map_location=torch.device('cpu'))
+	sch_model_3 = torch.load(os.path.join('/home/s3754715/gnn_molecule/schnetpack/model_2020-06-23-18-44-00', 'best_model'), map_location=torch.device('cpu'))
+	sch_model_4 = torch.load(os.path.join('/home/s3754715/gnn_molecule/schnetpack/model_2020-06-23-18-41-59', 'best_model'), map_location=torch.device('cpu'))
+	sch_model_5 = torch.load(os.path.join('/home/s3754715/gnn_molecule/schnetpack/model_2020-06-15-04-47-32', 'best_model'), map_location=torch.device('cpu'))
 	omdData = OrganicMaterialsDatabase(args.datapath, download=False, load_only=[args.property], environment_provider=environment_provider)
 	split_path = os.path.join(args.model_path, "split.npz")
 	train, val, test = spk.train_test_split(
