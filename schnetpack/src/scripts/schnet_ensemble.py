@@ -71,8 +71,8 @@ def main(args):
 		    # print('----------')
 		    # print(pred_1[args.property])
 		    # print(torch.mean(pred_1[args.property], dim=1))
-		    tmp = torch.sum(torch.abs(torch.mean(pred_1[args.property], dim=1).unsqueeze(dim=1)-batch[args.property]))
-		    # tmp = torch.sum(torch.abs(torch.mean(torch.stack([pred_1[args.property], pred_2[args.property], pred_3[args.property], pred_4[args.property], pred_5[args.property]],dim=1), dim=1)-batch[args.property]))
+		    # tmp = torch.sum(torch.abs(torch.mean(pred_1[args.property], dim=1).unsqueeze(dim=1)-batch[args.property]))
+		    tmp = torch.sum(torch.abs(torch.mean(torch.stack([pred_1[args.property], pred_2[args.property], pred_3[args.property], pred_4[args.property], pred_5[args.property]],dim=1), dim=1).unsqueeze(dim=1)-batch[args.property]))
 		    tmp = tmp.detach().cpu().numpy() # detach from graph & convert to numpy
 		    print(tmp)
 		    err += tmp
