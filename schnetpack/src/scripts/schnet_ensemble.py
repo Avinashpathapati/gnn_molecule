@@ -61,10 +61,10 @@ def main(args):
 
 		    # apply model
 		    pred_1 = sch_model_1(batch)
-		    # pred_2 = sch_model_2(batch)
-		    # pred_3 = sch_model_3(batch)
-		    # pred_4 = sch_model_4(batch)
-		    # pred_5 = sch_model_5(batch)
+		    pred_2 = sch_model_2(batch)
+		    pred_3 = sch_model_3(batch)
+		    pred_4 = sch_model_4(batch)
+		    pred_5 = sch_model_5(batch)
 
 		    # calculate absolute error
 		    # tmp = torch.sum(torch.abs(pred_1[args.property]-batch[args.property]))
