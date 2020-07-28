@@ -133,7 +133,8 @@ def main(args):
 			os.makedirs(omdb)
 
 		omdData = OrganicMaterialsDatabase(args.datapath, download=False, load_only=[args.property], environment_provider=environment_provider)
-		split_path = os.path.join(args.model_path, "split.npz")
+		# split_path = os.path.join(args.model_path, "split.npz")
+		split_path = os.path.join('/home/s3754715/gnn_molecule/schnetpack/model_2020-06-23-18-44-59', "split.npz")
 		train, val, test = spk.train_test_split(
 			data=omdData,
 			num_train=9000,
